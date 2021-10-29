@@ -5,4 +5,5 @@ export const BoardWrapper = styled.div`
     justify-content: start;
     align-items: center;
     background-color: #0079bf;
+    height: 100%;
 `
