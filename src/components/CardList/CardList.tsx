@@ -1,8 +1,7 @@
 import React from 'react'
 import Card, { ICard } from '../Card/Card'
-import { CardTextWrap, CardTitle } from '../Card/style'
-import { CardListWrap } from './styles'
-
+import styled from "styled-components";
+import { CardTextWrap, CardTitle } from '../Card/AddCardButton';
 interface Props {
     cards: Array<ICard>,
     clicked: boolean    
@@ -20,3 +19,12 @@ export const CardList = (props: Props) => {
         </CardListWrap>
     )
 }
+
+const CardListWrap = styled.div`
+    margin: 0 4px;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0 4px;
+    z-index: 1;
+`

@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { CardWrap } from './style';
+import styled from "styled-components";
 
 export interface ICard {
   title: string
@@ -15,3 +14,17 @@ export default function Card (props: ICardProps) {
     </CardWrap>
   );
 }
+
+const CardWrap = styled.div`
+    background-color: #ffffff;
+    border-radius: 3px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    position: relative;
+    white-space: normal;
+    padding: 10px 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+`

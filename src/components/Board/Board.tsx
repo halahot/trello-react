@@ -1,7 +1,6 @@
-import * as React from 'react';
 import { ICard } from '../Card/Card';
-import Column from '../Column/Column';
-import { BoardWrapper } from './styles';
+import styled from "styled-components";
+import { Column } from '../Column';
 
 export interface IBoardProps {
 }
@@ -33,3 +32,11 @@ export default function Board(props: IBoardProps) {
     </BoardWrapper>
   );
 }
+
+export const BoardWrapper = styled.div`
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    background-color: #0079bf;
+    height: 100%;
+`

@@ -1,7 +1,6 @@
-import React from 'react';
 import './App.css';
-import Board from './components/Board/Board';
-import { Header } from './components/Header/Header';
+import { Board} from './components/Board';
+import { Header } from './components/Header';
 import { GlobalStyle } from './styles/global';
 
 function App() {

@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { AddCardButton } from '../Card/AddCardButton';
-import Card, { ICard } from '../Card/Card';
-import { CardTextWrap, CardTitle } from '../Card/style';
+import { ICard } from '../Card/Card';
 import { CardList } from '../CardList/CardList';
-import { ColumnWrapper, ColumnTitle, ColumnTitleWrap, ListWrapper } from './styles';
 import { Title } from './Title';
+import styled from "styled-components"
 
 export interface IColumnProps {
   title: string,
@@ -30,10 +29,33 @@ export default function Column(props: IColumnProps) {
   return (
     <ListWrapper>
       <ColumnWrapper>
-        <Title text={props.title} setTitle={props.setTitle}/>
-        <CardList clicked={clicked} cards={props.cards}/>          
-        <AddCardButton setClicked={onClickAddButton} />
+        <Title text={props.title} setTitle={props.setTitle} />
+        <CardList clicked={clicked} cards={props.cards} />
+        <AddCardButton clicked={clicked} setClicked={onClickAddButton} />
       </ColumnWrapper>
     </ListWrapper>
   );
 }
+
+const ColumnWrapper = styled.div`
+    display: flex;
+    width: 272px;
+    align-items: start;
+    background-color: #ebecf0;
+    box-sizing: border-box;
+    display: inline-block;
+    margin: 10px 4px;
+    vertical-align: top;
+    white-space: nowrap;
+    border-radius: 3px;
+`
+
+const ListWrapper = styled.div`
+    box-sizing: border-box;
+    display: inline-block;
+    height: 100%;
+    margin: 0 4px;
+    vertical-align: top;
+    white-space: nowrap;
+    width: 272px;
+`

@@ -4,6 +4,14 @@ import styled from "styled-components"
 export interface Props {
 }
 
+export const Header = (props: Props) => {
+    return (
+        <WrapHeader>
+            <Image src="https://a.trellocdn.com/prgb/dist/images/header-logo-spirit.d947df93bc055849898e.gif" />
+        </WrapHeader>
+    )
+}
+
 const WrapHeader = styled.div`
     display: flex;
     align-items: center;
@@ -16,11 +24,3 @@ export const Image = styled.img`
     width: 80px;
     height: 16px;
 `
-
-export const Header = (props: Props) => {
-    return (
-        <WrapHeader>
-            <Image src="https://a.trellocdn.com/prgb/dist/images/header-logo-spirit.d947df93bc055849898e.gif" />
-        </WrapHeader>
-    )
-}
