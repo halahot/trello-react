@@ -1,4 +1,6 @@
+import { useState } from "react";
 import styled from "styled-components";
+import { CardModal } from "../CardModal";
 
 export interface ICard {
   title: string
@@ -7,15 +9,28 @@ export interface ICardProps {
   card: ICard
 }
 
-export default function Card (props: ICardProps) {
+export default function Card(props: ICardProps) {
+
+  const { card } = props;
+  const [visible, setVisible] = useState(false);
+
+  const onClick = () => {
+    setVisible(!visible);
+  }
+
   return (
-    <CardWrap>
-      {props.card.title}
-    </CardWrap>
+    <>
+      <CardWrap onClick={onClick}>
+        {props.card.title}
+        <img width="16px" height="16px" alt="comment" src="https://img.icons8.com/material-outlined/24/000000/comments--v1.png"/>
+      </CardWrap>
+      <CardModal card={card} visible={!visible} onClose={onClick} />
+    </>
   );
 }
 
 const CardWrap = styled.div`
+    gap: 10px;
     background-color: #ffffff;
     border-radius: 3px;
     box-sizing: border-box;
