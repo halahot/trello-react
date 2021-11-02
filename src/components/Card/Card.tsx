@@ -3,7 +3,10 @@ import styled from "styled-components";
 import { CardModal } from "../CardModal";
 
 export interface ICard {
-  title: string
+  title?: string
+  autor?: string
+  description?: string
+  comment?: string
 }
 export interface ICardProps {
   card: ICard

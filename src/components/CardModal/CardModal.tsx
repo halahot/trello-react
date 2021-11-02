@@ -17,7 +17,7 @@ const CardModal = (props: Props) => {
             <Container>
                 <h2>{card.title}</h2>
                 <IconWrap onClick={onClose}>
-                    <CloseIcon />
+                    <CloseIcon width="20" height="20"/>
                 </IconWrap>
             </Container>
         </Popup>

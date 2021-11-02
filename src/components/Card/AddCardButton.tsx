@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { CloseIcon } from "../icons";
 
 interface Props {
     setClicked: () => void,
@@ -6,22 +7,29 @@ interface Props {
 }
 
 export const AddCardButton = (props: Props) => {
+
+    const { clicked, setClicked } = props;
     return (
-        <AddCardButtonWrap>
-            <CardButton clicked={props.clicked} onClick={props.setClicked}>
-                <span>&#43; Добавить карточку</span>
-            </CardButton>
-        </AddCardButtonWrap>
+        <>
+            {clicked ?
+                <ButtonWrap>
+                    <Button>Добавить карточку</Button>
+                    <IconWrap onClick={setClicked}>
+                        <CloseIcon width="15" height="15"/>
+                    </IconWrap>
+                </ButtonWrap>
+                : <AddCardButtonWrap>
+                    <CardButton onClick={setClicked}>
+                        <span>&#43; Добавить карточку</span>
+                    </CardButton>
+                </AddCardButtonWrap>}
+        </>
     )
 }
 
-interface CardButtonProps {
-    readonly clicked: boolean;
-}
-
-export const CardButton = styled.a<CardButtonProps>`
+const CardButton = styled.a`
     border-radius: 3px;
-    color: ${props => props.clicked ? "#5e6c84" : "#0079bf"};
+    color: #5e6c84;
     display: block;
     flex: 1 0 auto;
     margin: 2px 0 8px 8px;
@@ -35,7 +43,7 @@ export const CardButton = styled.a<CardButtonProps>`
     font-weight: 400;
     line-height: 20px;
 `
-export const AddCardButtonWrap = styled.div`
+const AddCardButtonWrap = styled.div`
 
     &:hover {
         background-color: #091e4214;
@@ -45,29 +53,47 @@ export const AddCardButtonWrap = styled.div`
     
 `
 
+const ButtonWrap = styled.div`
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    height: 32px;
+    margin: 0 4px 8px;
+    padding: 0 4px;
+    gap: 10px;
+
+`
+
+const Button = styled.button`
+    cursor: pointer;
+    background-color: #026aa7;
+    border: none;
+    box-shadow: none;
+    border-radius: 3px;
+    color: #fff;
+    margin-top: 0;
+    vertical-align: top;
+    line-height: 20px;
+    padding: 6px 12px;
+    text-decoration: none;
+`
+
 export const CardTextWrap = styled.div`
     background-color: #fff;
     border-radius: 3px;
     box-shadow: 0 1px 0 #091e4240;
-    cursor: pointer;
     display: block;
     margin-bottom: 8px;
     max-width: 300px;
     min-height: 20px;
     position: relative;
     text-decoration: none;
-    z-index: 0;
     padding: 6px 8px 2px;
     z-index: 10;
     overflow: hidden;
 `
-
-// export const AddCardButtonLbl = styled.span`
-//     font-size: 14px;
-//     font-weight: 400;
-//     line-height: 20px;
-
-// `
 
 export const CardTitle = styled.textarea`
     background: none;
@@ -83,4 +109,11 @@ export const CardTitle = styled.textarea`
     overflow-wrap: break-word;
     resize: none;
     height: 54px;
+`
+const IconWrap = styled.div`
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    align-items: center;
+    display: flex;
 `
