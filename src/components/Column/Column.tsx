@@ -1,5 +1,4 @@
-import { useReducer, useState } from 'react';
-import { AddCardButton } from '../Card/AddCardButton';
+import { useReducer } from 'react';
 import { CardList } from '../CardList/CardList';
 import { Title } from './Title';
 import styled from "styled-components"
@@ -21,7 +20,6 @@ export default function Column(props: IColumnProps) {
 
   const { list } = props;
 
-  // const [clicked, setClicked] = useState(false);
   const [state, dispatch] = useReducer(cardReducer, initialState)
 
 
