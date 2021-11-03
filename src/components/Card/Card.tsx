@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CardModal } from "../CardModal";
 
@@ -18,6 +18,20 @@ export default function Card(props: ICardProps) {
   const { card } = props;
   const [visible, setVisible] = useState(false);
 
+  const onKeyup = (e: any) => {
+    if (e.key === 'Escape')
+    setVisible(!visible);
+  }
+
+  useEffect(()=> {
+    if(visible) {
+      window.addEventListener('keyup', onKeyup);
+    } else {
+      window.removeEventListener('keyup', onKeyup);
+    }
+    return () => window.removeEventListener('click', onKeyup);
+  }, [visible])
+  
   const onClick = () => {
     setVisible(!visible);
   }

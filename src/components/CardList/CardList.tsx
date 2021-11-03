@@ -68,7 +68,6 @@ const CardTextWrap = styled.div`
     position: relative;
     text-decoration: none;
     padding: 6px 8px 2px;
-    z-index: 10;
     overflow: hidden;
 `
 

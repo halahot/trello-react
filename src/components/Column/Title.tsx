@@ -23,7 +23,6 @@ export const Title = (props: EditableProps) => {
     }
 
     const handleClickOutside = (e:any) => {
-        console.log("clicking anywhere");
         if (rootEl.current && rootEl.current.contains(e.target)) {
             // inside click
             return;

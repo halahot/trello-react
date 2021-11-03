@@ -11,13 +11,14 @@ interface Props {
 
 const CardModal = (props: Props) => {
 
-    const { card, onClose } = props;
+    const { card, onClose, visible } = props;
+
     return (
-        <Popup visible={props.visible}>
+        <Popup visible={visible}>
             <Container>
                 <h2>{card.title}</h2>
                 <IconWrap onClick={onClose}>
-                    <CloseIcon width="20" height="20"/>
+                    <CloseIcon width="20" height="20" />
                 </IconWrap>
             </Container>
         </Popup>
