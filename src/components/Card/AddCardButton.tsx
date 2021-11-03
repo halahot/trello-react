@@ -1,19 +1,22 @@
 import styled from "styled-components";
+import { ICard } from ".";
 import { CloseIcon } from "../icons";
 
 interface Props {
-    setClicked: () => void,
-    clicked: boolean
+    setClicked: () => void;
+    clicked: boolean;
+    addCard: () => void;
 }
 
 export const AddCardButton = (props: Props) => {
 
-    const { clicked, setClicked } = props;
+    const { clicked, setClicked, addCard } = props;
+
     return (
         <>
             {clicked ?
                 <ButtonWrap>
-                    <Button>Добавить карточку</Button>
+                    <Button onClick={addCard}>Добавить карточку</Button>
                     <IconWrap onClick={setClicked}>
                         <CloseIcon width="15" height="15"/>
                     </IconWrap>

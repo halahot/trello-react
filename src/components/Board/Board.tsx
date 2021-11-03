@@ -1,59 +1,48 @@
 import { ICard } from '../Card/Card';
 import styled from "styled-components";
 import { Column } from '../Column';
-import { Popup } from '../Popup';
 import { WelcomeModal } from '../WelcomeModal/WelcomeModal';
-import { useEffect, useState } from 'react';
+import { useReducer, useState } from 'react';
+import { initialState } from '../../state/state';
+import { listReducer } from '../../state';
+import { Types } from '../../state/types';
 
-export interface IBoardProps {
-}
+export interface IBoardProps {}
 
 export interface ITodoList {
+  id: number,
   title: string,
-  cards: Array<ICard>
+  cards: ICard[]
 }
-
-const defaultColumns: Array<ITodoList> =
-  [{ title: "Todo", cards: [{ title: "Сходить в магазин" }, { title: "Полить цветы" }] },
-  { title: "Todo", cards: [{ title: "Сходить в магазин" }, { title: "Полить цветы" }] },
-  { title: "Todo", cards: [{ title: "Сходить в магазин" }, { title: "Полить цветы" }] },
-  { title: "Todo", cards: [{ title: "Сходить в магазин" }, { title: "Полить цветы" }] }];
-
-const name: string | null = localStorage.getItem('name'); 
 
 export default function Board(props: IBoardProps) {
 
-  const [visible, setVisible] = useState(!!name)
-  const [lists, setList] = useState<Array<ITodoList>>();
+  // const name: string | null = localStorage.getItem('name');
 
-  useEffect(() => {
-    const storageLists = localStorage.getItem('lists')
-    if(storageLists === null) {
-      localStorage.setItem('lists', JSON.stringify(defaultColumns));
-      setList(defaultColumns)
-    } else {
-      setList(JSON.parse(storageLists));
-    }
-  }, []);
+  const [state, dispatch] = useReducer(listReducer, initialState)
+  const [visible, setVisible] = useState(!!state.name)
 
-  const setTitle = (text: string) => {
-    //здесь потом реализуем запись в локал сторадж
-
-    console.log(text)
+  const setTitle = (id: number, title: string) => {
+    dispatch({
+      type: Types.EditTitle,
+      payload: {
+        id,
+        title 
+      }
+    })
   }
-
-  const columns = lists && lists.map((list, index) => <Column key={index} setTitle={setTitle} title={list.title} cards={list.cards}/>)
 
   const saveName = (name: string) => {
     localStorage.setItem('name', name);
     setVisible(true);
   }
 
+  const columns = state.lists?.map((list, index) => <Column key={index} setTitle={setTitle} list={list}/>)
+
   return (
     <BoardWrapper>
       <WelcomeModal saveName={saveName} visible = {visible}/>
       {columns}
-      {/* {!name ? <Popup visible/> : {columns}} */}
     </BoardWrapper>
   );
 }

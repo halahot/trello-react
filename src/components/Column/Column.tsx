@@ -1,14 +1,17 @@
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 import { AddCardButton } from '../Card/AddCardButton';
-import { ICard } from '../Card/Card';
 import { CardList } from '../CardList/CardList';
 import { Title } from './Title';
 import styled from "styled-components"
+import { ITodoList } from '../Board/Board';
+import { cardReducer } from '../../state';
+import { initialState } from '../../state/state';
+import { Types } from '../../state/types';
+import { ICard } from '../Card';
 
 export interface IColumnProps {
-  title: string,
-  cards: Array<ICard>
-  setTitle: (arg0: string) => void
+  list: ITodoList;
+  setTitle: (id: number, title: string) => void; 
   // isActive: boolean
 }
 
@@ -16,22 +19,33 @@ export interface IColumnProps {
 
 export default function Column(props: IColumnProps) {
 
-  const [clicked, setClicked] = useState(false);
+  const { list } = props;
 
-  const onClickAddButton = () => {
-    if (!clicked) {
-      setClicked(true)
-    } else {
-      setClicked(false)
-    }
+  // const [clicked, setClicked] = useState(false);
+  const [state, dispatch] = useReducer(cardReducer, initialState)
+
+
+  const addCard = (card: ICard) => {
+    dispatch({
+      type: Types.AddCard,
+      payload: {
+        id: list.id,
+        card 
+      }
+    })
+  }
+
+
+  const setTitle = (text: string) => {
+    props.setTitle(list.id, text);
+    console.log(text)
   }
 
   return (
     <ListWrapper>
       <ColumnWrapper>
-        <Title text={props.title} setTitle={props.setTitle} />
-        <CardList clicked={clicked} cards={props.cards} />
-        <AddCardButton clicked={clicked} setClicked={onClickAddButton} />
+        <Title text={list.title} setTitle={setTitle} />
+        <CardList addCard={addCard} cards={list.cards} />
       </ColumnWrapper>
     </ListWrapper>
   );

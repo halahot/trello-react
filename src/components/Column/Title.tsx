@@ -22,17 +22,24 @@ export const Title = (props: EditableProps) => {
         }
     }
 
-    useEffect(() => {
-
-        const onClick = (e: any) => {
-            // console.log("e", e.target);
-            // console.log("root", rootEl);
-            // console.log(rootEl.current !== (e.target));
-            rootEl.current === (e.target) || console.log("");
+    const handleClickOutside = (e:any) => {
+        console.log("clicking anywhere");
+        if (rootEl.current && rootEl.current.contains(e.target)) {
+            // inside click
+            return;
         }
-        document.addEventListener('click', onClick);
-        return () => document.removeEventListener('click', onClick);
-    }, []);
+        // outside click
+        setClicked(false);
+    };
+
+    useEffect(() => {
+        if (clicked) {
+            document.addEventListener("mousedown", handleClickOutside);
+          } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+          }
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [clicked]);
 
     return (
         <ColumnTitleWrap onClick={onTitleClick}>

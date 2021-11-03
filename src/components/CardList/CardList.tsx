@@ -1,21 +1,54 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Card, { ICard } from '../Card/Card'
 import styled from "styled-components";
-import { CardTextWrap, CardTitle } from '../Card/AddCardButton';
+import { AddCardButton, CardTextWrap, CardTitle } from '../Card/AddCardButton';
 interface Props {
     cards: Array<ICard>,
-    clicked: boolean    
+    // clicked: boolean
+    addCard: (card: ICard) => void;
 }
 
-export const CardList = (props: Props) => {
+export const CardList: React.FC<Props> = ({ cards, addCard }) => {
 
-    const cards = props.cards.map((card, index) => <Card key={index} card={card}/>)
+
+    const [clicked, setClicked] = useState(false);
+    const [newCard, setNewCard] = useState<ICard>();
+
+    const cardsElements = cards?.map((card, index) => <Card key={index} card={card} />)
+
+    const onChangeCardTitle = (e: any) => {
+        if(newCard) {
+            newCard.title = e.target.value
+        } else {
+            setNewCard({
+                id: Math.round(Math.random() * 10000),
+                title: e.target.value
+            })
+        }
+        
+    }
+
+    const createCard = () => {
+        if(newCard) {
+            addCard(newCard);
+        }        
+    }
+
+    const onClickAddButton = () => {
+        if (!clicked) {
+            setClicked(true)
+        } else {
+            setClicked(false)
+        }
+    }
+
     return (
         <CardListWrap>
-            {cards}
-            {props.clicked && <CardTextWrap>
-            <CardTitle placeholder="Ввести заголовок для этой карточки" />
-          </CardTextWrap>}
+            {cardsElements}
+            {clicked && <CardTextWrap>
+                <CardTitle onChange={onChangeCardTitle} placeholder="Ввести заголовок для этой карточки" />
+            </CardTextWrap>}
+            <AddCardButton clicked={clicked} addCard={createCard} setClicked={onClickAddButton} />
         </CardListWrap>
     )
 }
