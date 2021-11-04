@@ -24,7 +24,8 @@ export const CardList: React.FC<Props> = ({ cards, addCard }) => {
     const createCard = () => {
         addCard({
             id: Math.round(Math.random() * 10000),
-            title: text
+            title: text,
+            autor: localStorage.getItem('name') || ''
         });
         setText('');
     }
