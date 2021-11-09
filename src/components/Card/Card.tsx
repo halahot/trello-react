@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CardModal } from "../CardModal";
+import { BsFillPencilFill } from "react-icons/bs";
+import { CardEditModal } from "../CardEditModal";
+import { Coordinates } from "../../types";
+import { Badges } from "../Badges";
 
 export interface ICard {
   id: number;
@@ -11,39 +15,84 @@ export interface ICard {
 }
 export interface ICardProps {
   card: ICard
+  deleteCard: (cardId: number) => void;
 }
 
-export default function Card(props: ICardProps) {
+export default function Card({ card, deleteCard }: ICardProps) {
 
-  const { card } = props;
+  const [coordinates, setCoordinates] = useState<Coordinates>({ x: 0, y: 0 });
   const [visible, setVisible] = useState(false);
+  const [visibleEditModal, setVisibleEditModal] = useState(false);
+  const [isShown, setIsShown] = useState(false);
 
-  const onKeyup = (e: any) => {
-    if (e.key === 'Escape')
-    setVisible(!visible);
+  useEffect(() => {
+    const onKeyup = (e: any) => {
+      if (e.key === 'Escape') {
+        onCloseModal();
+      }
+    }
+
+    if (visible || visibleEditModal) {
+      window.addEventListener('keyup', onKeyup);
+    }
+
+    return () => window.removeEventListener('keyup', onKeyup);
+  }, [visible, visibleEditModal])
+
+  const onClickIcon = (e: React.MouseEvent) => {
+    setCoordinates({ x: e.clientX, y: e.clientY })
+    setVisibleEditModal(true);
+    setIsShown(false);
   }
 
-  useEffect(()=> {
-    if(visible) {
-      window.addEventListener('keyup', onKeyup);
-    } else {
-      window.removeEventListener('keyup', onKeyup);
-    }
-    return () => window.removeEventListener('click', onKeyup);
-  }, [visible])
-  
-  const onClick = () => {
-    setVisible(!visible);
+  const openModal = () => {
+    setVisible(true);
+    setVisibleEditModal(false);
+  }
+
+  const onCloseModal = () => {
+    setVisible(false);
+    setVisibleEditModal(false);
+  }
+
+  const onClickDelete = () => {
+    deleteCard(card.id);
+  }
+
+  const renameCard = (title: string) => {
+    console.log(title);
+  }
+
+  const editCard = (card: ICard) => {
+    console.log(card);
   }
 
   return (
-    <>
-      <CardWrap onClick={onClick}>
-        {props.card.title}
-        <img width="16px" height="16px" alt="comment" src="https://img.icons8.com/material-outlined/24/000000/comments--v1.png"/>
+    <div style={{ position: "relative" }}>
+      <CardWrap onClick={openModal}
+        onMouseEnter={() => setIsShown(true)}
+        onMouseLeave={() => setIsShown(false)}>
+        <Row>
+          {card.title}
+        </Row>
+        <Row>
+          <Badges openCard={openModal} />
+        </Row>
       </CardWrap>
-      <CardModal card={card} visible={!visible} onClose={onClick} />
-    </>
+      <CardModal card={card}
+        deleteCard={onClickDelete}
+        editCard={editCard}
+        visible={!visible}
+        onClose={onCloseModal} />
+      <CardEditModal title={card.title}
+        coordinates={coordinates}
+        visible={!visibleEditModal}
+        deleteCard={onClickDelete}
+        openCard={openModal}
+        renameCard={renameCard}
+        onClose={onCloseModal} />
+      <IconWrap onMouseEnter={() => setIsShown(true)} isActive={isShown} onClick={onClickIcon}><BsFillPencilFill /></IconWrap>
+    </div>
   );
 }
 
@@ -59,5 +108,27 @@ const CardWrap = styled.div`
     white-space: normal;
     padding: 10px 8px;
     margin-bottom: 8px;
+    cursor: pointer;
+`
+
+const Row = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+`
+
+interface IconWrapProps {
+  readonly isActive: boolean;
+}
+
+const IconWrap = styled.div<IconWrapProps>`
+    color: #525252;
+    width: 20px;
+    height: 20px;
+    display: ${(props) => (props.isActive ? "block" : "none")};
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
     cursor: pointer;
 `

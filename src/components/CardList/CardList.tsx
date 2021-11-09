@@ -6,16 +6,16 @@ interface Props {
     cards: Array<ICard>,
     // clicked: boolean
     addCard: (card: ICard) => void;
+    deleteCard: (cardId: number) => void;
 }
 
-export const CardList: React.FC<Props> = ({ cards, addCard }) => {
+export const CardList: React.FC<Props> = ({ cards, addCard, deleteCard }) => {
 
 
     const [clicked, setClicked] = useState(false);
     const [text, setText] = useState('');
-    // const [newCard, setNewCard] = useState<ICard>();
 
-    const cardsElements = cards?.map((card, index) => <Card key={index} card={card} />)
+    const cardsElements = cards?.map((card, index) => <Card key={index} deleteCard={deleteCard} card={card} />)
 
     const onChangeCardTitle = (e: any) => {
         setText(e.target.value);

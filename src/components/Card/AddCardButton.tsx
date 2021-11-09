@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { ICard } from ".";
 import { CloseIcon } from "../icons";
+import { SaveButton } from "../SaveButton";
 
 interface Props {
     setClicked: () => void;
@@ -16,7 +17,7 @@ export const AddCardButton = (props: Props) => {
         <>
             {clicked ?
                 <ButtonWrap>
-                    <Button onClick={addCard}>Добавить карточку</Button>
+                    <SaveButton action={addCard} label="Добавить карточку"/>
                     <IconWrap onClick={setClicked}>
                         <CloseIcon width="15" height="15"/>
                     </IconWrap>
