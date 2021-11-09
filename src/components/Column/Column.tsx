@@ -32,18 +32,27 @@ export default function Column(props: IColumnProps) {
       }
     })
   }
+  
+  const deleteCard = (cardId: number) => {
+    dispatch({
+      type: Types.DeleteCard,
+      payload: {
+        id: list.id,
+        cardId
+      }
+    })
+  }
 
 
   const setTitle = (text: string) => {
     props.setTitle(list.id, text);
-    console.log(text)
   }
 
   return (
     <ListWrapper>
       <ColumnWrapper>
         <Title text={list.title} setTitle={setTitle} />
-        <CardList addCard={addCard} cards={list.cards} />
+        <CardList addCard={addCard} deleteCard={deleteCard} cards={list.cards} />
       </ColumnWrapper>
     </ListWrapper>
   );

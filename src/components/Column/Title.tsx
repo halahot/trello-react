@@ -34,10 +34,8 @@ export const Title = (props: EditableProps) => {
     useEffect(() => {
         if (clicked) {
             document.addEventListener("mousedown", handleClickOutside);
-          } else {
-            document.removeEventListener("mousedown", handleClickOutside);
-          }
-        return () => document.removeEventListener('click', handleClickOutside);
+          } 
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [clicked]);
 
     return (

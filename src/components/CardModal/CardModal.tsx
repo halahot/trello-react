@@ -7,6 +7,8 @@ interface Props {
     visible: boolean;
     card: ICard;
     onClose: () => void;
+    deleteCard: () => void;
+    editCard: (card: ICard) => void;
 }
 
 const CardModal = (props: Props) => {
