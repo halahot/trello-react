@@ -14,7 +14,8 @@ export const Header = (props: Props) => {
 const WrapHeader = styled.div`
     display: flex;
     align-items: center;
-    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
     background-color: #576ce4;
 `
 export const Image = styled.img`

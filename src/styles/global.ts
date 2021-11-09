@@ -13,8 +13,16 @@ export const GlobalStyle = createGlobalStyle`
         height: 100%;
         overflow: hidden;
     }
+
+    body { 
+        background-color: #f4f5f7;
+        position: relative;
+        z-index: 0;
+    }
     #root{
         margin:0 auto;
         height: 100%;
+        overflow: hidden;
+        background-color: rgb(0, 121, 191);
     }
     `

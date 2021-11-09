@@ -7,7 +7,7 @@ import { initialState } from '../../state/state';
 import { listReducer } from '../../state';
 import { Types } from '../../state/types';
 
-export interface IBoardProps {}
+export interface IBoardProps { }
 
 export interface ITodoList {
   id: number,
@@ -27,7 +27,7 @@ export default function Board(props: IBoardProps) {
       type: Types.EditTitle,
       payload: {
         id,
-        title 
+        title
       }
     })
   }
@@ -37,20 +37,31 @@ export default function Board(props: IBoardProps) {
     setVisible(true);
   }
 
-  const columns = state.lists?.map((list, index) => <Column key={index} setTitle={setTitle} list={list}/>)
+  const columns = state.lists?.map((list, index) => <Column key={index} setTitle={setTitle} list={list} />)
 
   return (
     <BoardWrapper>
-      <WelcomeModal saveName={saveName} visible = {visible}/>
-      {columns}
+      <WelcomeModal saveName={saveName} visible={visible} />
+      <ColumnWrapper>
+        {columns}
+      </ColumnWrapper>
     </BoardWrapper>
   );
 }
 
-export const BoardWrapper = styled.div`
+export const BoardWrapper = styled.main`
+    position: relative;
+    overflow-y: auto;
+    outline: none;
     display: flex;
-    justify-content: start;
-    align-items: center;
-    background-color: #0079bf;
-    height: 100%;
+    flex-direction: column;
+    flex-grow: 1;
+`
+
+export const ColumnWrapper = styled.div`
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
 `
