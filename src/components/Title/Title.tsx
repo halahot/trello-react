@@ -2,13 +2,20 @@ import { useEffect, useRef, useState } from "react";
 import styled from "styled-components"
 export interface EditableProps {
     text: string,
-    setTitle: (arg0: string) => void
+    height: string;
+    placeholder?: string;
+    setTitle: (arg0: string) => void;
 }
 
 export const Title = (props: EditableProps) => {
-
     const [clicked, setClicked] = useState(false);
 
+    useEffect(() => {
+        console.log(props.text)
+        console.log(!props.text)
+        setClicked(!props.text);
+    }, [])
+    
     const onTitleClick = () => {
         setClicked(true);
     }
@@ -22,11 +29,12 @@ export const Title = (props: EditableProps) => {
         }
     }
 
-    const handleClickOutside = (e:any) => {
+    const handleClickOutside = (e: any) => {
         if (rootEl.current && rootEl.current.contains(e.target)) {
             // inside click
             return;
         }
+        
         // outside click
         setClicked(false);
     };
@@ -34,13 +42,14 @@ export const Title = (props: EditableProps) => {
     useEffect(() => {
         if (clicked) {
             document.addEventListener("mousedown", handleClickOutside);
-          } 
+        }
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [clicked]);
-
+    
     return (
         <ColumnTitleWrap onClick={onTitleClick}>
-            {!clicked ? <ColumnTitle>{props.text}</ColumnTitle> : <ColumnEditTitle ref={rootEl} onKeyPress={saveTitle} />}
+            {!clicked ? <ColumnTitle>{props.text}</ColumnTitle> :
+                <ColumnEditTitle height={props.height} placeholder={props.placeholder} ref={rootEl} defaultValue={props.text} onKeyPress={saveTitle} />}
         </ColumnTitleWrap>
     )
 }
@@ -51,12 +60,16 @@ const ColumnTitle = styled.h2`
     line-height: 24px;
     font-weight: 600;
 `
+interface ColumnEditTitleProps {
+    height: string;
+}
 
-const ColumnEditTitle = styled.textarea`
+const ColumnEditTitle = styled.textarea<ColumnEditTitleProps>`
     font-weight: 600;
+    width: 100%;
     overflow: hidden;
     overflow-wrap: break-word;
-    height: 28px;
+    height: ${(props) => props.height};
     background: #0000;
     border-radius: 3px;
     box-shadow: none;

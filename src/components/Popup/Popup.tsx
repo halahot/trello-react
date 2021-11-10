@@ -21,12 +21,15 @@ interface WrapperProps {
 const PopupWrapper = styled.div<WrapperProps>`
     position: fixed;
     width: 100%;
-    height: 100vh;
+    height: 100%;
+    overflow-y: auto;
+    align-items: flex-start;
+    justify-content: center;
     top: 0;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.95);
-    z-index: 10;
-    display: ${(props) => props.visible ? "none" : "block"};
+    background-color: #000000a3;
+    z-index: 20;
+    display: ${(props) => props.visible ? "none" : "flex"};
 `
 
 

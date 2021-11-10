@@ -4,29 +4,32 @@ import styled from "styled-components";
 import { AddCardButton } from '../Card/AddCardButton';
 interface Props {
     cards: Array<ICard>,
-    // clicked: boolean
+    columnTitle: string;
     addCard: (card: ICard) => void;
     deleteCard: (cardId: number) => void;
 }
 
-export const CardList: React.FC<Props> = ({ cards, addCard, deleteCard }) => {
+export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteCard }) => {
 
 
     const [clicked, setClicked] = useState(false);
     const [text, setText] = useState('');
 
-    const cardsElements = cards?.map((card, index) => <Card key={index} deleteCard={deleteCard} card={card} />)
+    const cardsElements = cards?.map((card, index) => <Card columnTitle={columnTitle} key={index} deleteCard={deleteCard} card={card} />)
 
     const onChangeCardTitle = (e: any) => {
         setText(e.target.value);
     }
 
     const createCard = () => {
-        addCard({
-            id: Math.round(Math.random() * 10000),
-            title: text,
-            autor: localStorage.getItem('name') || ''
-        });
+        if (text) {
+            addCard({
+                id: Math.round(Math.random() * 10000),
+                title: text,
+                description: "",
+                autor: localStorage.getItem('name') || ''
+            });
+        }
         setText('');
     }
 

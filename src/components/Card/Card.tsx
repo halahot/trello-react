@@ -14,11 +14,12 @@ export interface ICard {
   comment?: string;
 }
 export interface ICardProps {
+  columnTitle: string;
   card: ICard
   deleteCard: (cardId: number) => void;
 }
 
-export default function Card({ card, deleteCard }: ICardProps) {
+export default function Card({ columnTitle, card, deleteCard }: ICardProps) {
 
   const [coordinates, setCoordinates] = useState<Coordinates>({ x: 0, y: 0 });
   const [visible, setVisible] = useState(false);
@@ -83,6 +84,7 @@ export default function Card({ card, deleteCard }: ICardProps) {
         deleteCard={onClickDelete}
         editCard={editCard}
         visible={!visible}
+        columnTitle={columnTitle}
         onClose={onCloseModal} />
       <CardEditModal title={card.title}
         coordinates={coordinates}

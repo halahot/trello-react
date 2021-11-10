@@ -1,17 +1,16 @@
 import { useReducer } from 'react';
-import { CardList } from '../CardList/CardList';
-import { Title } from './Title';
+import { CardList } from '../CardList';
+import { Title } from '../Title';
 import styled from "styled-components"
-import { ITodoList } from '../Board/Board';
+import { ITodoList } from '../Board';
 import { cardReducer } from '../../state';
-import { initialState } from '../../state/state';
-import { Types } from '../../state/types';
+import { initialState } from '../../state';
+import { Types } from '../../state';
 import { ICard } from '../Card';
 
 export interface IColumnProps {
   list: ITodoList;
   setTitle: (id: number, title: string) => void; 
-  // isActive: boolean
 }
 
 
@@ -51,8 +50,8 @@ export default function Column(props: IColumnProps) {
   return (
     <ListWrapper>
       <ColumnWrapper>
-        <Title text={list.title} setTitle={setTitle} />
-        <CardList addCard={addCard} deleteCard={deleteCard} cards={list.cards} />
+        <Title height="28px" text={list.title} setTitle={setTitle} />
+        <CardList columnTitle={list.title} addCard={addCard} deleteCard={deleteCard} cards={list.cards} />
       </ColumnWrapper>
     </ListWrapper>
   );
