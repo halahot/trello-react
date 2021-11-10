@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { CardModal } from "../CardModal";
 import { BsFillPencilFill } from "react-icons/bs";
 import { CardEditModal } from "../CardEditModal";
-import { Coordinates } from "../../types";
+import { Coordinates, Comment } from "../../types";
 import { Badges } from "../Badges";
 
 export interface ICard {
@@ -11,7 +11,7 @@ export interface ICard {
   title: string;
   autor: string;
   description?: string;
-  comment?: string;
+  comment?: Comment [];
 }
 export interface ICardProps {
   columnTitle: string;

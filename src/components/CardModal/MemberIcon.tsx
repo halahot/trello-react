@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface Props {
-    author: string;
+    author?: string;
 }
 
 const MemberIcon = ({author}: Props) => {

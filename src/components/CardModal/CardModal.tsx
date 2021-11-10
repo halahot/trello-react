@@ -10,6 +10,8 @@ import { IoList } from "react-icons/io5";
 import MemberIcon from './MemberIcon';
 import { ButtonWithCloseIcon } from '../ButtonsWithCloseIcon';
 import { DescriptionExists } from './DescriptionExists';
+import { CommentBlock } from './CommentBlock';
+import { Comment } from '../../types';
 
 interface Props {
     visible: boolean;
@@ -29,11 +31,13 @@ const CardModal = (props: Props) => {
     const [isEdit, setIsEdit] = useState(false);
     const [isShownActionComment, setisShownActionComment] = useState(false);
     const [comment, setComment] = useState<string>();
+    const [isShownDetails, setisShownDetails] = useState(false);
 
     useEffect(() => {
         setDesc('')
         setIsEdit(false);
         setisShownActionComment(false)
+        setComment('');
     }, [visible]);
 
     useEffect(() => {
@@ -44,7 +48,9 @@ const CardModal = (props: Props) => {
             }
             // outside click
 
-            setisShownActionComment(false);
+            if (!comment) {
+                setisShownActionComment(false);
+            }
         };
         if (isShownActionComment) {
             document.addEventListener("mousedown", handleClickOutside);
@@ -72,15 +78,59 @@ const CardModal = (props: Props) => {
     }
 
     const addComment = () => {
-        if(!comment) return;
-        console.log(comment);
-        setisShownActionComment(false);
+        if (!comment) return;
+
+        const newComment = {
+            id: Math.round(Math.random() * 10000),
+            text: comment,
+            author: localStorage.getItem('name') || ""
+        }
+
+        let comments = card.comment ? card.comment : []
+        comments?.push(newComment)
+
+        const newCard: ICard = {
+            ...card,
+            comment: comments
+        };
+
+        editCard(newCard);
         setComment('');
+        setisShownActionComment(false);
+    }
+
+    const editComment = (comment: Comment) => {
+        let comments = card.comment;
+        const index = comments?.findIndex((x) => x.id === comment.id) || 0
+        comments?.splice(index, 1, comment);
+
+        const newCard: ICard = {
+            ...card,
+            comment: comments
+        };
+
+        editCard(newCard);
+    }
+
+    const deleteComment = (id: number) => {
+        let comments = card.comment;
+        const index = comments?.findIndex((x) => x.id === id) || 0
+        comments?.splice(index, 1);
+
+
+        const newCard: ICard = {
+            ...card,
+            comment: comments
+        };
+        editCard(newCard);
     }
 
     const onClickComment = () => {
         setisShownActionComment(true);
     }
+
+    const comments = card.comment?.map((item, index) => <CommentBlock key={index} item={item}
+        editComment={editComment} deleteComment={deleteComment} />)
 
     return (
         <Popup visible={visible}>
@@ -126,13 +176,16 @@ const CardModal = (props: Props) => {
                                     <IoList style={{ width: "25px", height: "25px" }} />
                                 </IconWrap>
                                 <h3>Действия</h3>
-                                <Button style={{ marginBottom: "8px" }}>Показать подробности</Button>
+                                <Button onClick={() => setisShownDetails(!isShownDetails)} style={{ marginBottom: "8px" }}>
+                                    {isShownDetails ? "Скрыть подробности" : "Показать подробности"}
+                                </Button>
                             </ActionWrap>
                             <MemberIcon author={card.autor} />
                             <CommentBox ref={rootEl} className={isShownActionComment ? "open" : ""}>
-                                <Comment
+                                <CommentEl
                                     onClick={onClickComment}
                                     onChange={(e) => setComment(e.target.value)}
+                                    defaultValue={comment}
                                     placeholder="Напишите комментарий..." />
                                 <CommentAction
                                     isEdit={!!comment}
@@ -140,6 +193,11 @@ const CardModal = (props: Props) => {
                                     className={isShownActionComment ? "open" : ""} >Сохранить</CommentAction>
                             </CommentBox>
                         </CommentWrap>
+                        <div>{comments}</div>
+                        {isShownDetails && <Details>
+                            <MemberIcon author={card.autor} />
+                            <span>{`${card.autor} добавил эту карточку в список ${columnTitle}`}</span>
+                        </Details>}
                     </MainCol>
                     <SideBar>
                         <Button onClick={deleteCard}>Удалить</Button>
@@ -165,12 +223,21 @@ const Wrap = styled.div`
     z-index: 25;
     color: #42526e;
 `
+
+const Details = styled.div`
+    margin-left: 40px;
+    min-height: 32px;
+    padding: 8px 0;
+    position: relative;
+    line-height: 32px;
+`
+
 const CommentWrap = styled.div`
     margin: 0 0 8px 40px;
     position: relative;
 `
 
-const Comment = styled.textarea`
+const CommentEl = styled.textarea`
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -328,24 +395,3 @@ const CloseIconWrap = styled.div`
     width: 32px;
     z-index: 2;
 `
-
-const Description = styled.textarea<DescriptionProps>`
-    overflow: hidden;
-    overflow-wrap: break-word;
-    width: 100%;
-    resize: none;
-    height: ${(props) => props.height};
-`
-
-const TextWrap = styled.div`
-    overflow-wrap: break-word;
-    word-break: break-word;
-`
-
-const Text = styled.p`
-    margin: 0 0 8px;
-`
-
-interface DescriptionProps {
-    readonly height: string;
-}
