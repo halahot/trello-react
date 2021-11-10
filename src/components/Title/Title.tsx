@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components"
 export interface EditableProps {
     text: string,
@@ -9,47 +9,56 @@ export interface EditableProps {
 
 export const Title = (props: EditableProps) => {
     const [clicked, setClicked] = useState(false);
+    const [text, setText] = useState(props.text);
 
-    useEffect(() => {
-        console.log(props.text)
-        console.log(!props.text)
-        setClicked(!props.text);
-    }, [])
-    
     const onTitleClick = () => {
         setClicked(true);
     }
 
     const rootEl = useRef<HTMLTextAreaElement>(document.createElement("textarea"));
 
-    const saveTitle = (e: any) => {
+    const saveTitle = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
             setClicked(false);
-            props.setTitle(e.target.value);
+            if(text) {
+                props.setTitle(text);
+            }
         }
     }
 
-    const handleClickOutside = (e: any) => {
-        if (rootEl.current && rootEl.current.contains(e.target)) {
-            // inside click
-            return;
-        }
-        
-        // outside click
-        setClicked(false);
-    };
+    const onChange = (e: any) => {
+        console.log(e.target.value)
+        setText(e.target.value)
+    } 
 
     useEffect(() => {
+        const handleClickOutside = (e: any) => {
+            if (rootEl.current && rootEl.current.contains(e.target)) {
+                // inside click
+                return;
+            }
+            // outside click
+            
+            setClicked(false); 
+            if(text) {
+                props.setTitle(text);
+            }
+        };
         if (clicked) {
             document.addEventListener("mousedown", handleClickOutside);
         }
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [clicked]);
-    
+
     return (
         <ColumnTitleWrap onClick={onTitleClick}>
-            {!clicked ? <ColumnTitle>{props.text}</ColumnTitle> :
-                <ColumnEditTitle height={props.height} placeholder={props.placeholder} ref={rootEl} defaultValue={props.text} onKeyPress={saveTitle} />}
+            {!clicked ? <ColumnTitle>{text}</ColumnTitle> :
+                <ColumnEditTitle height={props.height}
+                    placeholder={props.placeholder}
+                    onChange={onChange}
+                    ref={rootEl}
+                    defaultValue={text} 
+                    onKeyPress={saveTitle} />}
         </ColumnTitleWrap>
     )
 }

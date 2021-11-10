@@ -34,7 +34,14 @@ export const CardEditModal = ({ title, openCard, renameCard, deleteCard, visible
     }, [rootEl])
 
     const onSave = () => {
+        // debugger
         renameCard(text);
+    }
+
+    const onSavePressEnter = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            renameCard(text);
+        }
     }
 
     const { x, y } = coordinates;
@@ -42,7 +49,7 @@ export const CardEditModal = ({ title, openCard, renameCard, deleteCard, visible
         <Popup visible={visible}>
             <Container top={`${y}px`} left={`${x - 236}px`}>
                 <TextWrap>
-                    <TextBox onChange={(e) => setTitle(e.target.value)} ref={rootEl} defaultValue={text} />
+                    <TextBox onChange={(e) => setTitle(e.target.value)} onKeyPress={onSavePressEnter} ref={rootEl} defaultValue={text} />
                     <Badges openCard={openCard} />
                 </TextWrap>
                 <SaveButton action={onSave} label="Сохранить" />

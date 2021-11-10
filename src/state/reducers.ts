@@ -37,6 +37,12 @@ export const cardReducer = (
         ...state,
         lists: deleteCard(state.lists, action.payload.id, action.payload.cardId)
       }
+      
+    case Types.EditCard:
+      return {
+        ...state,
+        lists: editCard(state.lists, action.payload.id, action.payload.card)
+      }
     default: return state;
   }
 };
@@ -98,6 +104,32 @@ function deleteCard(lists: ITodoList[], id: number, cardId: number): ITodoList[]
 
     const cardIndex = cards.findIndex(x => x.id === cardId);
     cards.splice(cardIndex, 1);
+
+    const newEl: ITodoList = {
+      ...column,
+      cards: cards
+    }
+
+    lists.splice(index, 1, newEl);
+
+    localStorage.setItem('lists', JSON.stringify(lists))
+
+    return lists;
+  }
+
+  return lists;
+}
+
+function editCard(lists: ITodoList[], id: number, card: ICard): ITodoList[] {
+  let column: ITodoList | undefined = lists.find(x => x.id === id);
+  const index = lists.findIndex(x => x.id === id);
+
+
+  if (column) {
+    let cards: ICard[] = column.cards;
+
+    const cardIndex = cards.findIndex(x => x.id === card.id);
+    cards.splice(cardIndex, 1, card);
 
     const newEl: ITodoList = {
       ...column,

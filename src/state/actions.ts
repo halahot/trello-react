@@ -26,7 +26,7 @@ export type AddCardPayload = {
 export type CardAction =
     | { type: Types.AddCard; payload: AddCardPayload }
     | { type: Types.DeleteCard; payload: DeleteCardPayload }
-    | { type: Types.EditCard; error: string };
+    | { type: Types.EditCard; payload: AddCardPayload };
 
 
 export function addCard(payload: AddCardPayload): CardAction {
@@ -35,4 +35,8 @@ export function addCard(payload: AddCardPayload): CardAction {
 
 export function deleteCard(payload: DeleteCardPayload): CardAction {
     return { type: Types.DeleteCard, payload };
+}
+
+export function editCard(payload: AddCardPayload): CardAction {
+    return { type: Types.EditCard, payload };
 }

@@ -17,9 +17,10 @@ export interface ICardProps {
   columnTitle: string;
   card: ICard
   deleteCard: (cardId: number) => void;
+  editCard: (card: ICard) => void;
 }
 
-export default function Card({ columnTitle, card, deleteCard }: ICardProps) {
+export default function Card({ columnTitle, card, deleteCard, editCard }: ICardProps) {
 
   const [coordinates, setCoordinates] = useState<Coordinates>({ x: 0, y: 0 });
   const [visible, setVisible] = useState(false);
@@ -58,14 +59,17 @@ export default function Card({ columnTitle, card, deleteCard }: ICardProps) {
 
   const onClickDelete = () => {
     deleteCard(card.id);
+    setVisible(false);
   }
 
   const renameCard = (title: string) => {
-    console.log(title);
-  }
+    const newCard: ICard = {
+      ...card,
+      title
+    };
 
-  const editCard = (card: ICard) => {
-    console.log(card);
+    editCard(newCard);
+    setVisibleEditModal(false);
   }
 
   return (

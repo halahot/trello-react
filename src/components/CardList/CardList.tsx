@@ -6,16 +6,17 @@ interface Props {
     cards: Array<ICard>,
     columnTitle: string;
     addCard: (card: ICard) => void;
+    editCard: (card: ICard) => void;
     deleteCard: (cardId: number) => void;
 }
 
-export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteCard }) => {
+export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteCard, editCard }) => {
 
 
     const [clicked, setClicked] = useState(false);
     const [text, setText] = useState('');
 
-    const cardsElements = cards?.map((card, index) => <Card columnTitle={columnTitle} key={index} deleteCard={deleteCard} card={card} />)
+    const cardsElements = cards?.map((card, index) => <Card columnTitle={columnTitle} key={index} editCard={editCard} deleteCard={deleteCard} card={card} />)
 
     const onChangeCardTitle = (e: any) => {
         setText(e.target.value);
@@ -33,6 +34,13 @@ export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteC
         setText('');
     }
 
+    
+    const saveTitle = (e: any) => {
+        if (e.key === 'Enter') {
+            createCard();
+        }
+    }
+
     const onClickAddButton = () => {
         if (!clicked) {
             setClicked(true)
@@ -45,7 +53,7 @@ export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteC
         <CardListWrap>
             {cardsElements}
             {clicked && <CardTextWrap>
-                <CardTitle value={text} onChange={onChangeCardTitle} placeholder="Ввести заголовок для этой карточки" />
+                <CardTitle value={text} onKeyPress={saveTitle} onChange={onChangeCardTitle} placeholder="Ввести заголовок для этой карточки" />
             </CardTextWrap>}
             <AddCardButton clicked={clicked} addCard={createCard} setClicked={onClickAddButton} />
         </CardListWrap>

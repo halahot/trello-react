@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components'
 import { ICard } from '../Card/Card'
 import { CloseIcon } from '../icons';
@@ -6,7 +6,10 @@ import { Popup } from '../Popup';
 import { Title } from '../Title';
 import { BiCreditCardFront } from "react-icons/bi";
 import { VscListSelection } from "react-icons/vsc";
+import { IoList } from "react-icons/io5";
 import MemberIcon from './MemberIcon';
+import { ButtonWithCloseIcon } from '../ButtonsWithCloseIcon';
+import { DescriptionExists } from './DescriptionExists';
 
 interface Props {
     visible: boolean;
@@ -19,11 +22,66 @@ interface Props {
 
 const CardModal = (props: Props) => {
 
-    const { card, onClose, visible, columnTitle } = props;
+    const { card, onClose, editCard, deleteCard, visible, columnTitle } = props;
+    const rootEl = useRef<HTMLDivElement>(document.createElement("div"));
 
-    const setTitle = (text: string) => {
-        console.log(text)
+    const [description, setDesc] = useState(card.description);
+    const [isEdit, setIsEdit] = useState(false);
+    const [isShownActionComment, setisShownActionComment] = useState(false);
+    const [comment, setComment] = useState<string>();
+
+    useEffect(() => {
+        setDesc('')
+        setIsEdit(false);
+        setisShownActionComment(false)
+    }, [visible]);
+
+    useEffect(() => {
+        const handleClickOutside = (e: any) => {
+            if (rootEl.current && rootEl.current.contains(e.target)) {
+                // inside click
+                return;
+            }
+            // outside click
+
+            setisShownActionComment(false);
+        };
+        if (isShownActionComment) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [isShownActionComment]);
+
+    const setTitle = (title: string) => {
+        const newCard: ICard = {
+            ...card,
+            title
+        };
+
+        editCard(newCard);
     }
+
+    const setDescription = () => {
+        const newCard: ICard = {
+            ...card,
+            description
+        };
+
+        editCard(newCard);
+        setIsEdit(false);
+    }
+
+    const addComment = () => {
+        if(!comment) return;
+        console.log(comment);
+        setisShownActionComment(false);
+        setComment('');
+    }
+
+    const onClickComment = () => {
+        setisShownActionComment(true);
+    }
+
     return (
         <Popup visible={visible}>
             <Wrap>
@@ -31,33 +89,60 @@ const CardModal = (props: Props) => {
                     <Header>
                         <Title height="33px" text={card.title} setTitle={setTitle} />
                         <span>{`в колонке ${columnTitle}`}</span>
-                        <DescriptionIconWrap>
+                        <IconWrap>
                             <BiCreditCardFront style={{ width: "25px", height: "25px" }} />
-                        </DescriptionIconWrap>
+                        </IconWrap>
                     </Header>
                     <MainCol>
                         <DescriptionWrap>
                             <DescriptionRow>
-                                <DescriptionIconWrap>
+                                <IconWrap>
                                     <VscListSelection style={{ width: "25px", height: "25px" }} />
-                                </DescriptionIconWrap>
+                                </IconWrap>
                                 <h3>Описание</h3>
-                                {card.description && <Button>Изменить</Button>}
+                                {card.description && <Button
+                                    onClick={() => setIsEdit(true)}
+                                    style={{ marginLeft: "8px" }}>Изменить</Button>}
                             </DescriptionRow>
                             <DescriptionRow>
-                                <Title placeholder="Добавить более подробное описание..."
-                                    height="80px"
-                                    setTitle={setTitle}
-                                    text={card.description ? card.description : ""} />
+                                {(description || isEdit) ? <DescriptionExists
+                                    description={description}
+                                    setDesc={setDesc}
+                                    setIsEdit={setIsEdit}
+                                    isEdit={isEdit}
+                                /> :
+                                    <DescNotExist onClick={() => setIsEdit(true)}>Добавить более подробное описание...</DescNotExist>}
                             </DescriptionRow>
+                            {isEdit && <DescriptionRow>
+                                <ButtonWithCloseIcon
+                                    action={setDescription}
+                                    label="Сохранить"
+                                    setClicked={() => setIsEdit(false)} />
+                            </DescriptionRow>}
                         </DescriptionWrap>
                         <CommentWrap>
-                            <MemberIcon author={card.autor}/>
-                            <Description height="20px" placeholder="Напишите комментарий..." />
+                            <ActionWrap>
+                                <IconWrap>
+                                    <IoList style={{ width: "25px", height: "25px" }} />
+                                </IconWrap>
+                                <h3>Действия</h3>
+                                <Button style={{ marginBottom: "8px" }}>Показать подробности</Button>
+                            </ActionWrap>
+                            <MemberIcon author={card.autor} />
+                            <CommentBox ref={rootEl} className={isShownActionComment ? "open" : ""}>
+                                <Comment
+                                    onClick={onClickComment}
+                                    onChange={(e) => setComment(e.target.value)}
+                                    placeholder="Напишите комментарий..." />
+                                <CommentAction
+                                    isEdit={!!comment}
+                                    onClick={addComment}
+                                    className={isShownActionComment ? "open" : ""} >Сохранить</CommentAction>
+                            </CommentBox>
                         </CommentWrap>
                     </MainCol>
                     <SideBar>
-                        <Button>Удалить</Button>
+                        <Button onClick={deleteCard}>Удалить</Button>
                     </SideBar>
                 </Content>
                 <CloseIconWrap onClick={onClose}>
@@ -85,13 +170,78 @@ const CommentWrap = styled.div`
     position: relative;
 `
 
+const Comment = styled.textarea`
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    height: 20px;
+    cursor: pointer;
+    width: 100%;
+    resize: none;
+    background: #fff;
+    line-height: 20px;
+    outline: none;
+    border: 0;
+`
+
+interface CommentActionProps {
+    readonly isEdit: boolean;
+}
+
+const CommentAction = styled.div<CommentActionProps>`
+    bottom: 8px;
+    left: 12px;
+    opacity: 0;
+    position: absolute;
+    background-color: ${props => props.isEdit ? "#0079bf" : "#091e420a"}; 
+    border: none;
+    box-shadow: none;
+    color: ${props => props.isEdit ? "#fff" : "#a5adba"}; 
+    transform: translateY(48px);
+    cursor: ${props => props.isEdit ? "pointer" : "not-allowed"};
+    transition-duration: 85ms;
+    transition-property: opacity,transform;
+    padding: 6px 12px;
+
+    &.open {
+        opacity: 1;
+        transform: translateY(0);
+    }
+`
+const CommentBox = styled.div`
+    padding: 8px 12px;
+    position: relative;
+    background-color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px -1px #091e4240, 0 0 0 1px #091e4214;
+    margin: 4px 4px 12px 0;
+    overflow: hidden;
+    position: relative;
+    transition-duration: 85ms;
+    transition-property: padding-bottom;
+    transition-timing-function: ease;
+
+
+    &.open {
+        padding-bottom: 56px;
+    }
+`
+
+const ActionWrap = styled.div`
+    align-items: center;
+    display: flex;
+    min-height: 32px;
+    justify-content: space-between;
+`
+
 const DescriptionWrap = styled.div`
     clear: both;
     margin-bottom: 24px;
     position: relative;
     
 `
-const DescriptionIconWrap = styled.div`
+const IconWrap = styled.div`
     top: 8px;
     left: -40px;
     position: absolute;    
@@ -108,6 +258,17 @@ const DescriptionRow = styled.div`
     margin: 0 0 4px 40px;
     padding: 8px 0;
     position: relative;
+`
+const DescNotExist = styled.a`
+    background-color: #091e420a;
+    border: none;
+    border-radius: 3px;
+    box-shadow: none;
+    display: block;
+    min-height: 40px;
+    padding: 8px 12px;
+    text-decoration: none;
+    cursor: pointer;
 `
 
 const Header = styled.div`
@@ -174,6 +335,15 @@ const Description = styled.textarea<DescriptionProps>`
     width: 100%;
     resize: none;
     height: ${(props) => props.height};
+`
+
+const TextWrap = styled.div`
+    overflow-wrap: break-word;
+    word-break: break-word;
+`
+
+const Text = styled.p`
+    margin: 0 0 8px;
 `
 
 interface DescriptionProps {

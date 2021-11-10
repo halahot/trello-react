@@ -41,6 +41,16 @@ export default function Column(props: IColumnProps) {
       }
     })
   }
+  
+  const editCard = (card: ICard) => {
+    dispatch({
+      type: Types.EditCard,
+      payload: {
+        id: list.id,
+        card
+      }
+    })
+  }
 
 
   const setTitle = (text: string) => {
@@ -51,7 +61,7 @@ export default function Column(props: IColumnProps) {
     <ListWrapper>
       <ColumnWrapper>
         <Title height="28px" text={list.title} setTitle={setTitle} />
-        <CardList columnTitle={list.title} addCard={addCard} deleteCard={deleteCard} cards={list.cards} />
+        <CardList columnTitle={list.title} addCard={addCard} editCard={editCard} deleteCard={deleteCard} cards={list.cards} />
       </ColumnWrapper>
     </ListWrapper>
   );
