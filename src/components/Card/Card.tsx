@@ -81,7 +81,7 @@ export default function Card({ columnTitle, card, deleteCard, editCard }: ICardP
           {card.title}
         </Row>
         <Row>
-          <Badges openCard={openModal} />
+          <Badges isComment={!!card.comment} countComment={card.comment?.length} isDescription={!!card.description} openCard={openModal} />
         </Row>
       </CardWrap>
       <CardModal card={card}
