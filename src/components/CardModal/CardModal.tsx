@@ -12,6 +12,7 @@ import { ButtonWithCloseIcon } from '../ButtonsWithCloseIcon';
 import { DescriptionExists } from './DescriptionExists';
 import { CommentBlock } from './CommentBlock';
 import { Comment } from '../../types';
+import { Form, Field } from "react-final-form";
 
 interface Props {
     visible: boolean;
@@ -20,6 +21,10 @@ interface Props {
     onClose: () => void;
     deleteCard: () => void;
     editCard: (card: ICard) => void;
+}
+
+interface Values {
+    comment?: string;
 }
 
 const CardModal = (props: Props) => {
@@ -57,6 +62,29 @@ const CardModal = (props: Props) => {
         }
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isShownActionComment]);
+
+    const onSubmit = (values: Values) => {
+        console.log(values);
+        // if (!comment) return;
+
+        // const newComment = {
+        //     id: Math.round(Math.random() * 10000),
+        //     text: comment,
+        //     author: localStorage.getItem('name') || ""
+        // }
+
+        // let comments = card.comment ? card.comment : []
+        // comments?.push(newComment)
+
+        // const newCard: ICard = {
+        //     ...card,
+        //     comment: comments
+        // };
+
+        // editCard(newCard);
+        // setComment('');
+        // setisShownActionComment(false);
+    };
 
     const setTitle = (title: string) => {
         const newCard: ICard = {
@@ -182,15 +210,24 @@ const CardModal = (props: Props) => {
                             </ActionWrap>
                             <MemberIcon author={card.autor} />
                             <CommentBox ref={rootEl} className={isShownActionComment ? "open" : ""}>
-                                <CommentEl
-                                    onClick={onClickComment}
-                                    onChange={(e) => setComment(e.target.value)}
-                                    defaultValue={comment}
-                                    placeholder="Напишите комментарий..." />
-                                <CommentAction
-                                    isEdit={!!comment}
-                                    onClick={addComment}
-                                    className={isShownActionComment ? "open" : ""} >Сохранить</CommentAction>
+                                <Form
+                                    onSubmit={onSubmit}
+                                    subscription={{ pristine: false }}
+                                    render={({ handleSubmit, submitting, pristine, values }) => (
+                                        <form onSubmit={handleSubmit}>
+                                            <Field<string>
+                                                name="comment"
+                                                onClick={onClickComment}
+                                                component={CommentEl}
+                                                placeholder="Напишите комментарий..." />
+                                            <CommentAction type="submit"
+                                                className={isShownActionComment ? "open" : ""}
+                                                isEdit={pristine}>
+                                                Сохранить
+                                            </CommentAction>
+                                            <pre>{JSON.stringify(values, undefined, 2)}</pre>
+                                        </form>
+                                    )} />
                             </CommentBox>
                         </CommentWrap>
                         <div>{comments}</div>
@@ -256,7 +293,7 @@ interface CommentActionProps {
     readonly isEdit: boolean;
 }
 
-const CommentAction = styled.div<CommentActionProps>`
+const CommentAction = styled.button<CommentActionProps>`
     bottom: 8px;
     left: 12px;
     opacity: 0;
@@ -292,6 +329,10 @@ const CommentBox = styled.div`
 
     &.open {
         padding-bottom: 56px;
+    }
+
+    form { 
+
     }
 `
 
