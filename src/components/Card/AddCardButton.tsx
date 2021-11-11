@@ -1,8 +1,5 @@
 import styled from "styled-components";
-import { ICard } from ".";
 import { ButtonWithCloseIcon } from "../ButtonsWithCloseIcon";
-import { CloseIcon } from "../icons";
-import { SaveButton } from "../SaveButton";
 
 interface Props {
     setClicked: () => void;
