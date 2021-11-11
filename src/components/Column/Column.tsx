@@ -3,14 +3,13 @@ import { CardList } from '../CardList';
 import { Title } from '../Title';
 import styled from "styled-components"
 import { ITodoList } from '../Board';
-import { cardReducer } from '../../state';
+import { cardReducer, listReducer } from '../../state';
 import { initialState } from '../../state';
 import { Types } from '../../state';
 import { ICard } from '../Card';
 
 export interface IColumnProps {
   list: ITodoList;
-  setTitle: (id: number, title: string) => void; 
 }
 
 
@@ -19,11 +18,12 @@ export default function Column(props: IColumnProps) {
 
   const { list } = props;
 
-  const [state, dispatch] = useReducer(cardReducer, initialState)
+  const [, dispatchCard] = useReducer(cardReducer, initialState);
+  const [, dispatchList] = useReducer(listReducer, initialState);
 
 
   const addCard = (card: ICard) => {
-    dispatch({
+    dispatchCard({
       type: Types.AddCard,
       payload: {
         id: list.id,
@@ -33,7 +33,7 @@ export default function Column(props: IColumnProps) {
   }
   
   const deleteCard = (cardId: number) => {
-    dispatch({
+    dispatchCard({
       type: Types.DeleteCard,
       payload: {
         id: list.id,
@@ -43,7 +43,7 @@ export default function Column(props: IColumnProps) {
   }
   
   const editCard = (card: ICard) => {
-    dispatch({
+    dispatchCard({
       type: Types.EditCard,
       payload: {
         id: list.id,
@@ -53,8 +53,14 @@ export default function Column(props: IColumnProps) {
   }
 
 
-  const setTitle = (text: string) => {
-    props.setTitle(list.id, text);
+  const setTitle = (title: string) => {
+    dispatchList({
+      type: Types.EditTitle,
+      payload: {
+        id: list.id,
+        title
+      }
+    })
   }
 
   return (

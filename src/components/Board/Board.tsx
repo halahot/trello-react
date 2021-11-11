@@ -5,7 +5,6 @@ import { WelcomeModal } from '../WelcomeModal/WelcomeModal';
 import { useReducer, useState } from 'react';
 import { initialState } from '../../state/state';
 import { listReducer } from '../../state';
-import { Types } from '../../state/types';
 
 export interface IBoardProps { }
 
@@ -17,27 +16,15 @@ export interface ITodoList {
 
 export default function Board(props: IBoardProps) {
 
-  // const name: string | null = localStorage.getItem('name');
-
-  const [state, dispatch] = useReducer(listReducer, initialState)
+  const [state, ] = useReducer(listReducer, initialState);
   const [visible, setVisible] = useState(!!state.name)
-
-  const setTitle = (id: number, title: string) => {
-    dispatch({
-      type: Types.EditTitle,
-      payload: {
-        id,
-        title
-      }
-    })
-  }
 
   const saveName = (name: string) => {
     localStorage.setItem('name', name);
     setVisible(true);
   }
 
-  const columns = state.lists?.map((list, index) => <Column key={index} setTitle={setTitle} list={list} />)
+  const columns = state.lists?.map((list, index) => <Column key={index} list={list} />)
 
   return (
     <BoardWrapper>
