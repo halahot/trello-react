@@ -21,6 +21,7 @@ export const CommentBlock = ({ item, editComment, deleteComment }: Props) => {
         }
 
         editComment(newComment);
+        setShowEdit(false);
     }
     return (
         <Wrap>
