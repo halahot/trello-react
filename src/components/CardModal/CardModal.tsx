@@ -13,6 +13,7 @@ import { DescriptionExists } from './DescriptionExists';
 import { CommentBlock } from './CommentBlock';
 import { Comment, Coordinates } from '../../types';
 import { CardDeleteModal } from '../CardDeleteModal';
+import autosize from 'autosize';
 
 interface Props {
     visible: boolean;
@@ -26,7 +27,7 @@ interface Props {
 const CardModal = (props: Props) => {
 
     const { card, onClose, editCard, deleteCard, visible, columnTitle } = props;
-    const rootEl = useRef<HTMLDivElement>(document.createElement("div"));
+    const rootEl = useRef<HTMLTextAreaElement>(null);
 
     const [description, setDesc] = useState(card.description);
     const [isEdit, setIsEdit] = useState(false);
@@ -37,13 +38,21 @@ const CardModal = (props: Props) => {
     const [coordinatesDel, setCoordinates] = useState<Coordinates>({ x: 0, y: 0 });
 
     useEffect(() => {
+        autosize(rootEl.current!);
         return () => {
-          setDesc("");
-          setIsEdit(false);
-          setisShownActionComment(false);
-          setComment("");
+            setDesc("");
+            setIsEdit(false);
+            setisShownActionComment(false);
+            setComment("");
         };
-      }, []);
+    }, []);
+
+    useEffect(() => {
+        if (visible) {
+            console.log(rootEl.current);
+            rootEl.current?.focus();
+        }
+    }, [visible]);
 
     useEffect(() => {
         const handleClickOutside = (e: any) => {
@@ -52,8 +61,7 @@ const CardModal = (props: Props) => {
                 return;
             }
             // outside click
-
-            if (!comment) {
+            if (!rootEl.current?.value) {
                 setisShownActionComment(false);
             }
         };
@@ -196,9 +204,10 @@ const CardModal = (props: Props) => {
                                 </Button>
                             </ActionWrap>
                             <MemberIcon author={card.autor} />
-                            <CommentBox ref={rootEl} className={isShownActionComment ? "open" : ""}>
+                            <CommentBox className={isShownActionComment ? "open" : ""}>
                                 <CommentEl
                                     onClick={onClickComment}
+                                    ref={rootEl}
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}
                                     placeholder="Напишите комментарий..." />
@@ -223,10 +232,10 @@ const CardModal = (props: Props) => {
                     <CloseIcon width="15" height="15" />
                 </CloseIconWrap>
                 <CardDeleteModal
-                visible={isDelete}
-                coordinates={coordinatesDel}
-                onDelete={onDelete}
-                onClose={() => setIsDelete(false)} />
+                    visible={isDelete}
+                    coordinates={coordinatesDel}
+                    onDelete={onDelete}
+                    onClose={() => setIsDelete(false)} />
             </Wrap>
         </Popup>
     )

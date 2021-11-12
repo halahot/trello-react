@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components"
+import autosize from 'autosize';
 export interface EditableProps {
     text: string,
     height: string;
@@ -11,23 +12,23 @@ export const Title = (props: EditableProps) => {
     const [clicked, setClicked] = useState(false);
     const [text, setText] = useState(props.text);
 
-    const onTitleClick = () => {
-        setClicked(true);
-    }
-
-    const rootEl = useRef<HTMLTextAreaElement>(document.createElement("textarea"));
+    const rootEl = useRef<HTMLTextAreaElement>(null);
 
     const saveTitle = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
-            setClicked(false);
+            rootEl.current?.blur();
             if(text) {
                 props.setTitle(text);
             }
+            setClicked(false);
         }
     }
+    
+    useEffect(() => {
+        autosize(rootEl.current!);
+    }, []);
 
     const onChange = (e: any) => {
-        console.log(e.target.value)
         setText(e.target.value)
     } 
 
@@ -37,38 +38,35 @@ export const Title = (props: EditableProps) => {
                 // inside click
                 return;
             }
-            // outside click
-            
-            setClicked(false); 
+            // outside click            
+            rootEl.current?.blur(); 
             if(text) {
                 props.setTitle(text);
             }
         };
+
         if (clicked) {
             document.addEventListener("mousedown", handleClickOutside);
+            rootEl.current?.focus();
         }
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            setClicked(false);
+        }
     }, [clicked]);
 
     return (
-        <ColumnTitleWrap onClick={onTitleClick}>
-            {!clicked ? <ColumnTitle>{text}</ColumnTitle> :
+        <ColumnTitleWrap onClick={() => setClicked(true)}>           
                 <ColumnEditTitle height={props.height}
                     placeholder={props.placeholder}
                     onChange={onChange}
                     ref={rootEl}
-                    defaultValue={text} 
-                    onKeyPress={saveTitle} />}
+                    value={text} 
+                    onKeyPress={saveTitle} />
         </ColumnTitleWrap>
     )
 }
 
-
-const ColumnTitle = styled.h2`
-    font-size: 20px;
-    line-height: 24px;
-    font-weight: 600;
-`
 interface ColumnEditTitleProps {
     height: string;
 }
@@ -76,7 +74,7 @@ interface ColumnEditTitleProps {
 const ColumnEditTitle = styled.textarea<ColumnEditTitleProps>`
     font-weight: 600;
     width: 100%;
-    overflow: hidden;
+    overflow: hidden scroll;
     overflow-wrap: break-word;
     height: ${(props) => props.height};
     background: #0000;
@@ -87,6 +85,9 @@ const ColumnEditTitle = styled.textarea<ColumnEditTitleProps>`
     min-height: 20px;
     padding: 4px 8px;
     resize: none;
+    outline: none;
+    border: none;
+    cursor: pointer;
 
     &:focus {
         background-color: #fff;
@@ -96,7 +97,7 @@ const ColumnEditTitle = styled.textarea<ColumnEditTitleProps>`
 const ColumnTitleWrap = styled.div`
     display: flex;
     width: 100%;
-    height: 40px;
+    min-height: 20px;
     align-items: center;
     padding: 10px 8px;
     cursor: pointer;
