@@ -11,7 +11,8 @@ import MemberIcon from './MemberIcon';
 import { ButtonWithCloseIcon } from '../ButtonsWithCloseIcon';
 import { DescriptionExists } from './DescriptionExists';
 import { CommentBlock } from './CommentBlock';
-import { Comment } from '../../types';
+import { Comment, Coordinates } from '../../types';
+import { CardDeleteModal } from '../CardDeleteModal';
 
 interface Props {
     visible: boolean;
@@ -32,6 +33,8 @@ const CardModal = (props: Props) => {
     const [isShownActionComment, setisShownActionComment] = useState(false);
     const [comment, setComment] = useState<string>();
     const [isShownDetails, setisShownDetails] = useState(false);
+    const [isDelete, setIsDelete] = useState(false);
+    const [coordinatesDel, setCoordinates] = useState<Coordinates>({ x: 0, y: 0 });
 
     useEffect(() => {
         return () => {
@@ -131,6 +134,16 @@ const CardModal = (props: Props) => {
         setisShownActionComment(true);
     }
 
+    const onClickDelete = (e: React.MouseEvent) => {
+        setCoordinates({ x: e.clientX, y: e.clientY })
+        setIsDelete(true);
+    }
+
+    const onDelete = () => {
+        deleteCard();
+        setIsDelete(false);
+    }
+
     const comments = card.comment?.map((item, index) => <CommentBlock key={index} item={item}
         editComment={editComment} deleteComment={deleteComment} />)
 
@@ -186,6 +199,7 @@ const CardModal = (props: Props) => {
                             <CommentBox ref={rootEl} className={isShownActionComment ? "open" : ""}>
                                 <CommentEl
                                     onClick={onClickComment}
+                                    value={comment}
                                     onChange={(e) => setComment(e.target.value)}
                                     placeholder="Напишите комментарий..." />
                                 <CommentAction
@@ -202,12 +216,17 @@ const CardModal = (props: Props) => {
                         </Details>}
                     </MainCol>
                     <SideBar>
-                        <Button onClick={deleteCard}>Удалить</Button>
+                        <Button onClick={onClickDelete}>Удалить</Button>
                     </SideBar>
                 </Content>
                 <CloseIconWrap onClick={onClose}>
                     <CloseIcon width="15" height="15" />
                 </CloseIconWrap>
+                <CardDeleteModal
+                visible={isDelete}
+                coordinates={coordinatesDel}
+                onDelete={onDelete}
+                onClose={() => setIsDelete(false)} />
             </Wrap>
         </Popup>
     )

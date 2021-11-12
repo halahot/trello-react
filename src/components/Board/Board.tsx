@@ -1,10 +1,10 @@
 import { ICard } from '../Card/Card';
 import styled from "styled-components";
 import { Column } from '../Column';
-import { WelcomeModal } from '../WelcomeModal/WelcomeModal';
 import { useReducer, useState } from 'react';
 import { initialState } from '../../state/state';
 import { listReducer } from '../../state';
+import { WelcomeModal } from '../WelcomeModal';
 
 export interface IBoardProps { }
 
@@ -17,7 +17,7 @@ export interface ITodoList {
 export default function Board(props: IBoardProps) {
 
   const [state, ] = useReducer(listReducer, initialState);
-  const [visible, setVisible] = useState(!!state.name)
+  const [visible, setVisible] = useState(!state.name)
 
   const saveName = (name: string) => {
     localStorage.setItem('name', name);

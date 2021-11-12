@@ -87,12 +87,12 @@ export default function Card({ columnTitle, card, deleteCard, editCard }: ICardP
       <CardModal card={card}
         deleteCard={onClickDelete}
         editCard={editCard}
-        visible={!visible}
+        visible={visible}
         columnTitle={columnTitle}
         onClose={onCloseModal} />
       <CardEditModal title={card.title}
         coordinates={coordinates}
-        visible={!visibleEditModal}
+        visible={visibleEditModal}
         deleteCard={onClickDelete}
         openCard={openModal}
         renameCard={renameCard}

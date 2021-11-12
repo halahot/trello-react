@@ -29,7 +29,7 @@ export const CommentBlock = ({ item, editComment, deleteComment }: Props) => {
             <CommentDesc>
                 <Name>{item.author}</Name>
                 <CommentBox>
-                    {!showEdit ? <p>{item.text}</p> :
+                    {!showEdit ? <Text>{item.text}</Text> :
                         <CommentEditBox>
                             <TextBox defaultValue={text} onChange={(e) => setText(e.target.value)} />
                             <ButtonWithCloseIcon action={saveText} label="Сохранить"
@@ -97,6 +97,10 @@ const TextBox = styled.textarea`
     overflow-wrap: break-word;
     resize: none;
     height: 54px;
+`
+
+const Text = styled.p`
+    white-space: pre-wrap;
 `
 
 const Actions = styled.div`
