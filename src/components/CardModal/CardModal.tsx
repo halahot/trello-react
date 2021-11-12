@@ -34,11 +34,13 @@ const CardModal = (props: Props) => {
     const [isShownDetails, setisShownDetails] = useState(false);
 
     useEffect(() => {
-        setDesc('')
-        setIsEdit(false);
-        setisShownActionComment(false)
-        setComment('');
-    }, [visible]);
+        return () => {
+          setDesc("");
+          setIsEdit(false);
+          setisShownActionComment(false);
+          setComment("");
+        };
+      }, []);
 
     useEffect(() => {
         const handleClickOutside = (e: any) => {
@@ -185,10 +187,10 @@ const CardModal = (props: Props) => {
                                 <CommentEl
                                     onClick={onClickComment}
                                     onChange={(e) => setComment(e.target.value)}
-                                    defaultValue={comment}
                                     placeholder="Напишите комментарий..." />
                                 <CommentAction
                                     isEdit={!!comment}
+                                    disabled={!comment}
                                     onClick={addComment}
                                     className={isShownActionComment ? "open" : ""} >Сохранить</CommentAction>
                             </CommentBox>
@@ -256,7 +258,7 @@ interface CommentActionProps {
     readonly isEdit: boolean;
 }
 
-const CommentAction = styled.div<CommentActionProps>`
+const CommentAction = styled.button<CommentActionProps>`
     bottom: 8px;
     left: 12px;
     opacity: 0;
