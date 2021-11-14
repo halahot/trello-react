@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import Card, { ICard } from '../Card/Card'
+import Card from '../Card/Card'
 import styled from "styled-components";
 import { AddCardButton } from '../Card/AddCardButton';
+import { ICard } from '../../types';
 interface Props {
     cards: Array<ICard>,
     columnTitle: string;

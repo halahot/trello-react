@@ -5,7 +5,7 @@ import { ButtonWithCloseIcon } from '../ButtonsWithCloseIcon';
 import MemberIcon from './MemberIcon';
 
 interface Props {
-    item: Comment
+    item: Comment;
     editComment: (comment: Comment) => void;
     deleteComment: (id: number) => void;
 }

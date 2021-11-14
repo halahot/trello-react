@@ -1,12 +1,10 @@
-import { useReducer } from 'react';
 import { CardList } from '../CardList';
 import { Title } from '../Title';
 import styled from "styled-components"
-import { ITodoList } from '../Board';
-import { cardReducer, listReducer } from '../../state';
-import { initialState } from '../../state';
-import { Types } from '../../state';
-import { ICard } from '../Card';
+import { editColumn } from '../../state/ducks/column';
+import { addCard, deleteCard, editCard } from '../../state/ducks/card';
+import { useDispatch } from 'react-redux';
+import { ITodoList, ICard } from '../../types';
 
 export interface IColumnProps {
   list: ITodoList;
@@ -18,56 +16,41 @@ export default function Column(props: IColumnProps) {
 
   const { list } = props;
 
-  const [, dispatchCard] = useReducer(cardReducer, initialState);
-  const [, dispatchList] = useReducer(listReducer, initialState);
+  const dispatch = useDispatch()
 
+  const clickAddCard = (card: ICard) => {
+    dispatch(addCard({
+      id: list.id,
+      card
+    }))
+  }
+  const clickDeleteCard = (cardId: number) => {
+    dispatch(deleteCard({
+      id: list.id,
+      cardId
+    }))
+  }
 
-  const addCard = (card: ICard) => {
-    dispatchCard({
-      type: Types.AddCard,
-      payload: {
-        id: list.id,
-        card 
-      }
-    })
-  }
-  
-  const deleteCard = (cardId: number) => {
-    dispatchCard({
-      type: Types.DeleteCard,
-      payload: {
-        id: list.id,
-        cardId
-      }
-    })
-  }
-  
-  const editCard = (card: ICard) => {
-    dispatchCard({
-      type: Types.EditCard,
-      payload: {
-        id: list.id,
-        card
-      }
-    })
+  const clickEditCard = (card: ICard) => {
+    dispatch(editCard({
+      id: list.id,
+      card
+    }))
   }
 
 
   const setTitle = (title: string) => {
-    dispatchList({
-      type: Types.EditTitle,
-      payload: {
-        id: list.id,
-        title
-      }
-    })
+    dispatch(editColumn({
+      id: list.id,
+      title
+    }))
   }
 
   return (
     <ListWrapper>
       <ColumnWrapper>
         <Title height="28px" text={list.title} setTitle={setTitle} />
-        <CardList columnTitle={list.title} addCard={addCard} editCard={editCard} deleteCard={deleteCard} cards={list.cards} />
+        <CardList columnTitle={list.title} addCard={clickAddCard} editCard={clickEditCard} deleteCard={clickDeleteCard} cards={list.cards} />
       </ColumnWrapper>
     </ListWrapper>
   );

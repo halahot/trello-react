@@ -1,6 +1,4 @@
-import Board, { ITodoList } from "./Board"
+import Board from "./Board"
 
 export { Board };
-
-export type { ITodoList }
 

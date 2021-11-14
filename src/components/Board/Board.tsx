@@ -1,30 +1,28 @@
-import { ICard } from '../Card/Card';
 import styled from "styled-components";
 import { Column } from '../Column';
 import { WelcomeModal } from '../WelcomeModal/WelcomeModal';
-import { useReducer, useState } from 'react';
-import { initialState } from '../../state/state';
-import { listReducer } from '../../state';
+import { useState } from 'react';
+import { InitialStateType } from '../../state/ducks/state';
+import { useDispatch, useSelector } from "react-redux";
+import { setName } from "../../state/ducks/name";
 
 export interface IBoardProps { }
 
-export interface ITodoList {
-  id: number,
-  title: string,
-  cards: ICard[]
-}
 
 export default function Board(props: IBoardProps) {
 
-  const [state, ] = useReducer(listReducer, initialState);
-  const [visible, setVisible] = useState(!!state.name)
+  const lists = useSelector((state: InitialStateType) => state.lists)
+  const name = useSelector((state: InitialStateType) => state.name)
+  const dispatch = useDispatch()
+  
+  const [visible, setVisible] = useState(!!name)
 
   const saveName = (name: string) => {
-    localStorage.setItem('name', name);
+    dispatch(setName(name));
     setVisible(true);
   }
-
-  const columns = state.lists?.map((list, index) => <Column key={index} list={list} />)
+debugger
+  const columns = lists?.map((list, index) => <Column key={index} list={list} />)
 
   return (
     <BoardWrapper>

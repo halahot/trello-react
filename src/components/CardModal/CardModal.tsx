@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components'
-import { ICard } from '../Card/Card'
 import { CloseIcon } from '../icons';
 import { Popup } from '../Popup';
 import { Title } from '../Title';
@@ -11,7 +10,7 @@ import MemberIcon from './MemberIcon';
 import { ButtonWithCloseIcon } from '../ButtonsWithCloseIcon';
 import { DescriptionExists } from './DescriptionExists';
 import { CommentBlock } from './CommentBlock';
-import { Comment } from '../../types';
+import { Comment, ICard } from '../../types';
 import { Form, Field } from "react-final-form";
 
 interface Props {
@@ -108,13 +107,13 @@ const CardModal = (props: Props) => {
     const addComment = () => {
         if (!comment) return;
 
-        const newComment = {
+        const newComment: Comment = {
             id: Math.round(Math.random() * 10000),
             text: comment,
             author: localStorage.getItem('name') || ""
         }
 
-        let comments = card.comment ? card.comment : []
+        let comments: Comment[] = card.comment ? card.comment : []
         comments?.push(newComment)
 
         const newCard: ICard = {

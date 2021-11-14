@@ -1,7 +1,8 @@
-import { ITodoList } from "../components/Board/Board";
+import { ICard, ITodoList } from "../../types";
 
 export type InitialStateType = {
   lists: ITodoList[];
+  cards?: ICard[];
   name: string;
 };
 
