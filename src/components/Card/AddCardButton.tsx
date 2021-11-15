@@ -1,26 +1,19 @@
 import styled from "styled-components";
-import { ButtonWithCloseIcon } from "../ButtonsWithCloseIcon";
 
 interface Props {
     setClicked: () => void;
-    clicked: boolean;
-    addCard: () => void;
 }
 
 export const AddCardButton = (props: Props) => {
 
-    const { clicked, setClicked, addCard } = props;
+    const { setClicked } = props;
 
     return (
-        <>
-            {clicked ?
-                <ButtonWithCloseIcon action={addCard} label="Добавить карточку" setClicked={setClicked} />
-                : <AddCardButtonWrap>
-                    <CardButton onClick={setClicked}>
-                        <span>&#43; Добавить карточку</span>
-                    </CardButton>
-                </AddCardButtonWrap>}
-        </>
+        <AddCardButtonWrap>
+            <CardButton onClick={setClicked}>
+                <span>&#43; Добавить карточку</span>
+            </CardButton>
+        </AddCardButtonWrap>
     )
 }
 

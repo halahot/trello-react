@@ -8,7 +8,7 @@ interface Props {
 
 const SaveButton = ({action, label}: Props) => {
     return (
-        <Button onClick={action}>
+        <Button onClick={action} type="submit">
             {label}
         </Button>
     )

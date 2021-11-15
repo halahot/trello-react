@@ -3,6 +3,7 @@ import Card from '../Card/Card'
 import styled from "styled-components";
 import { AddCardButton } from '../Card/AddCardButton';
 import { ICard } from '../../types';
+import { Form, Field } from 'react-final-form';
 interface Props {
     cards: Array<ICard>,
     columnTitle: string;
@@ -35,11 +36,13 @@ export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteC
         setText('');
     }
 
-    
+
     const saveTitle = (e: any) => {
         if (e.key === 'Enter') {
             createCard();
+            setClicked(false)
         }
+        
     }
 
     const onClickAddButton = () => {
@@ -50,13 +53,40 @@ export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteC
         }
     }
 
+    const onSubmit = (values: any) => {
+        console.log(values);
+        setClicked(false);
+    }
+
     return (
         <CardListWrap>
             {cardsElements}
-            {clicked && <CardTextWrap>
-                <CardTitle value={text} onKeyPress={saveTitle} onChange={onChangeCardTitle} placeholder="Ввести заголовок для этой карточки" />
-            </CardTextWrap>}
-            <AddCardButton clicked={clicked} addCard={createCard} setClicked={onClickAddButton} />
+            {clicked ?
+                <Form
+                    onSubmit={onSubmit}
+                    render={({ handleSubmit, submitting, pristine, values }) => (
+                        <form onSubmit={handleSubmit}>
+                            <Field
+                                name="comment"
+                                onChange={onChangeCardTitle}
+                                value={text}>{
+                                    (props) => (
+                                        <CardTextWrap>
+                                            <CardTitle
+                                            {...props.input}
+                                                value={props.value}
+                                                onKeyPress={saveTitle}
+                                                onChange={props.input.onChange}
+                                                placeholder="Ввести заголовок для этой карточки" /></CardTextWrap>
+                                    )
+                                }</Field>
+                            <button type="submit" disabled={submitting || pristine}>
+                                сохранить
+                            </button>
+                        </form>
+
+                    )} /> :
+            <AddCardButton setClicked={onClickAddButton} />}
         </CardListWrap>
     )
 }
@@ -82,6 +112,11 @@ const CardTextWrap = styled.div`
     text-decoration: none;
     padding: 6px 8px 2px;
     overflow: hidden;
+
+    & form {
+        display: flex;
+        flex-direction: column;
+    }
 `
 
 const CardTitle = styled.textarea`

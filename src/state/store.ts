@@ -1,8 +1,8 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import cardReducer from './ducks/card';
 import listReducer from './ducks/column';
-import storage from 'redux-persist/lib/storage';
-import { persistReducer } from 'redux-persist';
+// import storage from 'redux-persist/lib/storage';
+// import { persistReducer } from 'redux-persist';
 import nameReducer from './ducks/name';
 import { InitialStateType } from './ducks/state';
 import { ICard, ITodoList } from '../types';
@@ -14,10 +14,10 @@ const reducers = combineReducers({
 });
 
 //инфу о типах этого конфига не просто найти
-const persistConfig: any = {
-    key: 'root',
-    storage
-};
+// const persistConfig: any = {
+//     key: 'root',
+//     storage
+// };
 
 const storageLists = localStorage.getItem('lists')
 const name = localStorage.getItem('name')
@@ -37,7 +37,7 @@ export const initialState: InitialStateType = {
 
 const store = configureStore({
     reducer: reducers,
-    devTools: process.env.NODE_ENV !== 'production'
+    devTools: process.env.NODE_ENV !== 'production'    
 });
 
 

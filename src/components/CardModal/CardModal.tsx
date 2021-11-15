@@ -12,6 +12,7 @@ import { DescriptionExists } from './DescriptionExists';
 import { CommentBlock } from './CommentBlock';
 import { Comment, ICard } from '../../types';
 import { Form, Field } from "react-final-form";
+import { addComment } from './helpers';
 
 interface Props {
     visible: boolean;
@@ -66,19 +67,7 @@ const CardModal = (props: Props) => {
         console.log(values);
         // if (!comment) return;
 
-        // const newComment = {
-        //     id: Math.round(Math.random() * 10000),
-        //     text: comment,
-        //     author: localStorage.getItem('name') || ""
-        // }
-
-        // let comments = card.comment ? card.comment : []
-        // comments?.push(newComment)
-
-        // const newCard: ICard = {
-        //     ...card,
-        //     comment: comments
-        // };
+        // const newCard: ICard = addComment(card, comment);
 
         // editCard(newCard);
         // setComment('');
@@ -104,60 +93,12 @@ const CardModal = (props: Props) => {
         setIsEdit(false);
     }
 
-    const addComment = () => {
-        if (!comment) return;
-
-        const newComment: Comment = {
-            id: Math.round(Math.random() * 10000),
-            text: comment,
-            author: localStorage.getItem('name') || ""
-        }
-
-        let comments: Comment[] = card.comment ? card.comment : []
-        comments?.push(newComment)
-
-        const newCard: ICard = {
-            ...card,
-            comment: comments
-        };
-
-        editCard(newCard);
-        setComment('');
-        setisShownActionComment(false);
-    }
-
-    const editComment = (comment: Comment) => {
-        let comments = card.comment;
-        const index = comments?.findIndex((x) => x.id === comment.id) || 0
-        comments?.splice(index, 1, comment);
-
-        const newCard: ICard = {
-            ...card,
-            comment: comments
-        };
-
-        editCard(newCard);
-    }
-
-    const deleteComment = (id: number) => {
-        let comments = card.comment;
-        const index = comments?.findIndex((x) => x.id === id) || 0
-        comments?.splice(index, 1);
-
-
-        const newCard: ICard = {
-            ...card,
-            comment: comments
-        };
-        editCard(newCard);
-    }
-
     const onClickComment = () => {
         setisShownActionComment(true);
     }
 
-    const comments = card.comment?.map((item, index) => <CommentBlock key={index} item={item}
-        editComment={editComment} deleteComment={deleteComment} />)
+    // const comments = card.comment?.map((item, index) => <CommentBlock key={index} item={item}
+    //     editComment={editComment} deleteComment={deleteComment} />)
 
     return (
         <Popup visible={visible}>
@@ -217,8 +158,16 @@ const CardModal = (props: Props) => {
                                             <Field<string>
                                                 name="comment"
                                                 onClick={onClickComment}
-                                                component={CommentEl}
-                                                placeholder="Напишите комментарий..." />
+                                                placeholder="Напишите комментарий..." >{
+                                                    (props) => (
+                                                        <CommentEl
+                                                            onClick={onClickComment}
+                                                            name={props.input.name}
+                                                            value={props.input.value}
+                                                            onChange={props.input.onChange}
+                                                        />
+                                                    )
+                                                }</Field>
                                             <CommentAction type="submit"
                                                 className={isShownActionComment ? "open" : ""}
                                                 isEdit={pristine}>
@@ -229,7 +178,7 @@ const CardModal = (props: Props) => {
                                     )} />
                             </CommentBox>
                         </CommentWrap>
-                        <div>{comments}</div>
+                        {/* <div>{comments}</div> */}
                         {isShownDetails && <Details>
                             <MemberIcon author={card.autor} />
                             <span>{`${card.autor} добавил эту карточку в список ${columnTitle}`}</span>
