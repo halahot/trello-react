@@ -110,6 +110,8 @@ const CardModal = (props: Props) => {
         editCard(newCard);
         setComment('');
         setisShownActionComment(false);
+        if(rootEl.current) rootEl.current.style.height = '20px';
+        
     }
 
     const editComment = (comment: Comment) => {
