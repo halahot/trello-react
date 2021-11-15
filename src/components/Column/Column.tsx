@@ -1,8 +1,7 @@
 import { CardList } from '../CardList';
 import { Title } from '../Title';
 import styled from "styled-components"
-import { editColumn } from '../../state/ducks/column';
-import { addCard, deleteCard, editCard } from '../../state/ducks/card';
+import { addCard, deleteCard, editCard, renameList } from '../../state/ducks/card';
 import { useDispatch } from 'react-redux';
 import { ITodoList, ICard } from '../../types';
 
@@ -40,7 +39,7 @@ export default function Column(props: IColumnProps) {
 
 
   const setTitle = (title: string) => {
-    dispatch(editColumn({
+    dispatch(renameList({
       id: list.id,
       title
     }))

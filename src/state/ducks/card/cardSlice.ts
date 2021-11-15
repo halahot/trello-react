@@ -1,30 +1,42 @@
-import { initialState } from "../state";
 import { createSlice } from "@reduxjs/toolkit";
+import { ITodoList } from "../../../types";
+
+const defaultLists: ITodoList[] =
+  [{ id: 1, title: "Todo", cards: [] },
+  { id: 2, title: "In Progress", cards: [] },
+  { id: 3, title: "Testing", cards: [] },
+  { id: 4, title: "Done", cards: [] }];
 
 
-export const cardSlice = createSlice({
-  name: 'card',
-  initialState: initialState,
+export const listSlice = createSlice({
+  name: 'list',
+  initialState: defaultLists,
   reducers: {
+    renameList: (state, action) => {
+      const { id, title } = action.payload;
+      let index = state.findIndex(x => x.id === id);
+      state[index].title = title;
+      return state;
+    },
     addCard: (state, action) => {
       const { id, card } = action.payload;
-      const index = state.lists.findIndex(x => x.id === id);
-      state.lists[index].cards.push(card);
+      const index = state.findIndex(x => x.id === id);
+      state[index].cards.push(card);
     },
     deleteCard: (state, action) => {
       const { id, cardId } = action.payload;
-      const index = state.lists.findIndex(x => x.id === id);
-      state.lists[index].cards.filter((card) => card.id !== cardId);
+      const index = state.findIndex(x => x.id === id);
+      state[index].cards.filter((card) => card.id !== cardId);
     },
     editCard: (state, action) => {
       const { id, card } = action.payload;
-      const index = state.lists.findIndex(x => x.id === id);
-      const cardIndex = state.lists[index].cards.indexOf(card);
-      state.lists[index].cards.splice(cardIndex, 1, card);
+      const index = state.findIndex(x => x.id === id);
+      const cardIndex = state[index].cards.indexOf(card);
+      state[index].cards.splice(cardIndex, 1, card);
     },
   },
 });
 
-export const { addCard, deleteCard, editCard } = cardSlice.actions;
+export const { addCard, deleteCard, editCard, renameList } = listSlice.actions;
 
-export default cardSlice.reducer;
+export default listSlice.reducer;
