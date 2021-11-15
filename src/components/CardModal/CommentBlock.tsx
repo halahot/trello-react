@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Comment } from '../../types';
+import { Comment, Coordinates } from '../../types';
 import { ButtonWithCloseIcon } from '../ButtonsWithCloseIcon';
+import { CardDeleteModal } from '../CardDeleteModal';
 import MemberIcon from './MemberIcon';
 
 interface Props {
@@ -13,6 +14,8 @@ interface Props {
 export const CommentBlock = ({ item, editComment, deleteComment }: Props) => {
     const [showEdit, setShowEdit] = useState(false);
     const [text, setText] = useState(item.text);
+    const [isDelete, setIsDelete] = useState(false);
+    const [coordinatesDel, setCoordinates] = useState<Coordinates>({ x: 0, y: 0 });
 
     const saveText = () => {
         const newComment = {
@@ -22,6 +25,16 @@ export const CommentBlock = ({ item, editComment, deleteComment }: Props) => {
 
         editComment(newComment);
         setShowEdit(false);
+    }
+
+    const onDelete = (e: React.MouseEvent) => {
+        setCoordinates({ x: e.clientX, y: e.clientY })
+        setIsDelete(true);
+    }
+
+    const onDeleteConfirm = () => {
+        deleteComment(item.id);
+        setIsDelete(false);
     }
     return (
         <Wrap>
@@ -39,9 +52,14 @@ export const CommentBlock = ({ item, editComment, deleteComment }: Props) => {
                 <Actions>
                     <Action onClick={() => setShowEdit(true)}>Изменить</Action>
                     <span> - </span>
-                    <Action onClick={() => deleteComment(item.id)}>Удалить</Action>
+                    <Action onClick={onDelete}>Удалить</Action>
                 </Actions>
             </CommentDesc>
+            <CardDeleteModal
+                    visible={isDelete}
+                    coordinates={coordinatesDel}
+                    onDelete={onDeleteConfirm}
+                    onClose={() => setIsDelete(false)} />
         </Wrap>
     )
 }
