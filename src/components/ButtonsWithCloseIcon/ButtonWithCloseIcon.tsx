@@ -5,14 +5,15 @@ import { SaveButton } from '../SaveButton'
 
 interface Props {
     label: string;
+    disabled?: boolean
     setClicked: () => void;
-    action: () => void;
+    action?: () => void;
 }
 
-const ButtonWithCloseIcon = ({setClicked, action, label}: Props) => {
+const ButtonWithCloseIcon = ({setClicked, action, label, disabled}: Props) => {
     return (
         <ButtonWrap>
-            <SaveButton action={action} label={label} />
+            <SaveButton disabled={disabled} action={action} label={label} />
             <IconWrap onClick={setClicked}>
                 <CloseIcon width="15" height="15" />
             </IconWrap>

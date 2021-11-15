@@ -2,13 +2,14 @@ import React from 'react'
 import styled from 'styled-components'
 
 interface Props {
-    action: () => void;
+    action?: () => void;
     label: string;
+    disabled?: boolean
 }
 
-const SaveButton = ({action, label}: Props) => {
+const SaveButton = ({action, label, disabled}: Props) => {
     return (
-        <Button onClick={action} type="submit">
+        <Button onClick={action} disabled={disabled} type="submit">
             {label}
         </Button>
     )

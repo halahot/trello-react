@@ -10,9 +10,9 @@ import MemberIcon from './MemberIcon';
 import { ButtonWithCloseIcon } from '../ButtonsWithCloseIcon';
 import { DescriptionExists } from './DescriptionExists';
 import { CommentBlock } from './CommentBlock';
-import { Comment, ICard } from '../../types';
 import { Form, Field } from "react-final-form";
 import { addComment } from './helpers';
+import { ICard } from '../../types/ICard';
 
 interface Props {
     visible: boolean;
@@ -152,10 +152,9 @@ const CardModal = (props: Props) => {
                             <CommentBox ref={rootEl} className={isShownActionComment ? "open" : ""}>
                                 <Form
                                     onSubmit={onSubmit}
-                                    subscription={{ pristine: false }}
-                                    render={({ handleSubmit, submitting, pristine, values }) => (
+                                    render={({ handleSubmit, pristine, values }) => (
                                         <form onSubmit={handleSubmit}>
-                                            <Field<string>
+                                            <Field
                                                 name="comment"
                                                 onClick={onClickComment}
                                                 placeholder="Напишите комментарий..." >{

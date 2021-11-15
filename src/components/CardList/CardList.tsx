@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import Card from '../Card/Card'
 import styled from "styled-components";
 import { AddCardButton } from '../Card/AddCardButton';
-import { ICard } from '../../types';
 import { Form, Field } from 'react-final-form';
+import { ButtonWithCloseIcon } from '../ButtonsWithCloseIcon';
+import { ICard } from '../../types/ICard';
 interface Props {
     cards: Array<ICard>,
     columnTitle: string;
@@ -12,37 +13,31 @@ interface Props {
     deleteCard: (cardId: number) => void;
 }
 
-export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteCard, editCard }) => {
+interface Values {
+    title?: string;
+}
 
+export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteCard, editCard }) => {
+    let submit: () => void;
 
     const [clicked, setClicked] = useState(false);
-    const [text, setText] = useState('');
 
-    const cardsElements = cards?.map((card, index) => <Card columnTitle={columnTitle} key={index} editCard={editCard} deleteCard={deleteCard} card={card} />)
+    const cardsElements = cards?.map((card, index) =>
+        <Card columnTitle={columnTitle} key={index} editCard={editCard} deleteCard={deleteCard} card={card} />)
 
-    const onChangeCardTitle = (e: any) => {
-        setText(e.target.value);
+    const createCard = (text: string) => {
+        addCard({
+            id: Math.round(Math.random() * 10000),
+            title: text,
+            description: "",
+            autor: localStorage.getItem('name') || ''
+        });
     }
 
-    const createCard = () => {
-        if (text) {
-            addCard({
-                id: Math.round(Math.random() * 10000),
-                title: text,
-                description: "",
-                autor: localStorage.getItem('name') || ''
-            });
-        }
-        setText('');
-    }
-
-
-    const saveTitle = (e: any) => {
+    const onEnterPress = (e: any) => {
         if (e.key === 'Enter') {
-            createCard();
-            setClicked(false)
+            submit();
         }
-        
     }
 
     const onClickAddButton = () => {
@@ -53,9 +48,14 @@ export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteC
         }
     }
 
-    const onSubmit = (values: any) => {
-        console.log(values);
-        setClicked(false);
+    const onSubmit = (values: Values) => {
+        
+        console.log(values)
+        if (values.title) {
+            createCard(values.title);
+            setClicked(false);
+        }
+
     }
 
     return (
@@ -64,29 +64,31 @@ export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteC
             {clicked ?
                 <Form
                     onSubmit={onSubmit}
-                    render={({ handleSubmit, submitting, pristine, values }) => (
-                        <form onSubmit={handleSubmit}>
-                            <Field
-                                name="comment"
-                                onChange={onChangeCardTitle}
-                                value={text}>{
-                                    (props) => (
-                                        <CardTextWrap>
-                                            <CardTitle
-                                            {...props.input}
-                                                value={props.value}
-                                                onKeyPress={saveTitle}
-                                                onChange={props.input.onChange}
-                                                placeholder="Ввести заголовок для этой карточки" /></CardTextWrap>
-                                    )
-                                }</Field>
-                            <button type="submit" disabled={submitting || pristine}>
-                                сохранить
-                            </button>
-                        </form>
+                    render={({ handleSubmit, submitting, pristine, values }) => {
+                        submit = handleSubmit
+                        return (
+                            <form onSubmit={handleSubmit}>
+                                <Field
+                                    name="title"
+                                    value={values.title}
+                                >{
+                                        (props) => (
+                                            <CardTextWrap>
+                                                <CardTitle
+                                                    {...props.input}
+                                                    value={props.value}
+                                                    onKeyPress={onEnterPress}
+                                                    onChange={props.input.onChange}
+                                                    placeholder="Ввести заголовок для этой карточки" />
+                                            </CardTextWrap>
+                                        )
+                                    }</Field>
+                                <ButtonWithCloseIcon label="Сохранить" setClicked={onClickAddButton} disabled={submitting || pristine} />
+                            </form>
 
-                    )} /> :
-            <AddCardButton setClicked={onClickAddButton} />}
+                        )
+                    }} /> :
+                <AddCardButton setClicked={onClickAddButton} />}
         </CardListWrap>
     )
 }
