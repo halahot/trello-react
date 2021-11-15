@@ -2,23 +2,17 @@ import styled from "styled-components";
 import { Column } from '../Column';
 import { WelcomeModal } from '../WelcomeModal/WelcomeModal';
 import { useState } from 'react';
-import { InitialStateType } from '../../state/ducks/state';
 import { useDispatch, useSelector } from "react-redux";
 import { setName } from "../../state/ducks/name";
-import { ITodoList } from "../../types";
+import { RootState } from "../../state/store";
 
 export interface IBoardProps { }
 
 
 export default function Board(props: IBoardProps) {
 
-  // const lists = useSelector((state: InitialStateType) => state.lists)
-  const defaultLists: ITodoList[] =
-    [{ id: 1, title: "Todo", cards: [] },
-    { id: 2, title: "In Progress", cards: [] },
-    { id: 3, title: "Testing", cards: [] },
-    { id: 4, title: "Done", cards: [] }];
-  const name = useSelector((state: InitialStateType) => state.name)
+  const lists = useSelector((state: RootState) => state.lists);
+  const name = useSelector((state: RootState) => state.name)
   const dispatch = useDispatch()
   
   const [visible, setVisible] = useState(!!name)
@@ -27,8 +21,7 @@ export default function Board(props: IBoardProps) {
     dispatch(setName(name));
     setVisible(true);
   }
-debugger
-  const columns = defaultLists?.map((list, index) => <Column key={index} list={list} />)
+  const columns = lists?.map((list, index) => <Column key={index} list={list} />)
 
   return (
     <BoardWrapper>
