@@ -110,8 +110,8 @@ const CardModal = (props: Props) => {
         editCard(newCard);
         setComment('');
         setisShownActionComment(false);
-        if(rootEl.current) rootEl.current.style.height = '20px';
-        
+        if (rootEl.current) rootEl.current.style.height = '20px';
+
     }
 
     const editComment = (comment: Comment) => {
@@ -163,7 +163,7 @@ const CardModal = (props: Props) => {
                 <Content>
                     <Header>
                         <Title height="33px" text={card.title} setTitle={setTitle} />
-                        <span>{`в колонке ${columnTitle}`}</span>
+                        <div><span>{`в колонке ${columnTitle}`}</span></div>
                         <IconWrap>
                             <BiCreditCardFront style={{ width: "25px", height: "25px" }} />
                         </IconWrap>
@@ -375,6 +375,11 @@ const Header = styled.div`
     min-height: 32px;
     position: relative;
     z-index: 1;
+
+    & span {
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+    }
 `
 
 const MainCol = styled.div`
