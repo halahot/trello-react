@@ -8,7 +8,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
 
 let persistor = persistStore(store);
-console.log(persistor);
 
 ReactDOM.render(
   <React.StrictMode>

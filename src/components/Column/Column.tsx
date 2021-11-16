@@ -49,7 +49,7 @@ export default function Column(props: IColumnProps) {
     <ListWrapper>
       <ColumnWrapper>
         <Title height="28px" text={list.title} setTitle={setTitle} />
-        <CardList columnTitle={list.title} addCard={clickAddCard} editCard={clickEditCard} deleteCard={clickDeleteCard} cards={list.cards} />
+        <CardList column={list} addCard={clickAddCard} editCard={clickEditCard} deleteCard={clickDeleteCard} cards={list.cards} />
       </ColumnWrapper>
     </ListWrapper>
   );

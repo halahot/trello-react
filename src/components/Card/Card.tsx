@@ -3,17 +3,17 @@ import styled from "styled-components";
 import { CardModal } from "../CardModal";
 import { BsFillPencilFill } from "react-icons/bs";
 import { CardEditModal } from "../CardEditModal";
-import { Coordinates, ICard } from "../../types";
+import { Coordinates, ICard, ITodoList } from "../../types";
 import { Badges } from "../Badges";
 
 export interface ICardProps {
-  columnTitle: string;
+  column: ITodoList;
   card: ICard
   deleteCard: (cardId: number) => void;
   editCard: (card: ICard) => void;
 }
 
-export default function Card({ columnTitle, card, deleteCard, editCard }: ICardProps) {
+export default function Card({ column, card, deleteCard, editCard }: ICardProps) {
 
   const [coordinates, setCoordinates] = useState<Coordinates>({ x: 0, y: 0 });
   const [visible, setVisible] = useState(false);
@@ -53,6 +53,7 @@ export default function Card({ columnTitle, card, deleteCard, editCard }: ICardP
   const onClickDelete = () => {
     deleteCard(card.id);
     setVisible(false);
+    setVisibleEditModal(false);
   }
 
   const renameCard = (title: string) => {
@@ -81,7 +82,7 @@ export default function Card({ columnTitle, card, deleteCard, editCard }: ICardP
         deleteCard={onClickDelete}
         editCard={editCard}
         visible={!visible}
-        columnTitle={columnTitle}
+        column={column}
         onClose={onCloseModal} />
       <CardEditModal title={card.title}
         coordinates={coordinates}

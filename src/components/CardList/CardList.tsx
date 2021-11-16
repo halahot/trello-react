@@ -5,9 +5,10 @@ import { AddCardButton } from '../Card/AddCardButton';
 import { Form, Field } from 'react-final-form';
 import { ButtonWithCloseIcon } from '../ButtonsWithCloseIcon';
 import { ICard } from '../../types/ICard';
+import { ITodoList } from '../../types';
 interface Props {
     cards: Array<ICard>,
-    columnTitle: string;
+    column: ITodoList;
     addCard: (card: ICard) => void;
     editCard: (card: ICard) => void;
     deleteCard: (cardId: number) => void;
@@ -17,13 +18,13 @@ interface Values {
     title?: string;
 }
 
-export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteCard, editCard }) => {
+export const CardList: React.FC<Props> = ({ column, cards, addCard, deleteCard, editCard }) => {
     let submit: () => void;
 
     const [clicked, setClicked] = useState(false);
 
     const cardsElements = cards?.map((card, index) =>
-        <Card columnTitle={columnTitle} key={index} editCard={editCard} deleteCard={deleteCard} card={card} />)
+        <Card column={column} key={index} editCard={editCard} deleteCard={deleteCard} card={card} />)
 
     const createCard = (text: string) => {
         addCard({
@@ -85,7 +86,6 @@ export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteC
                                     }</Field>
                                 <ButtonWithCloseIcon label="Сохранить" setClicked={onClickAddButton} disabled={submitting || pristine} />
                             </form>
-
                         )
                     }} /> :
                 <AddCardButton setClicked={onClickAddButton} />}

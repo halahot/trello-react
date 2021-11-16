@@ -11,12 +11,17 @@ import { ButtonWithCloseIcon } from '../ButtonsWithCloseIcon';
 import { DescriptionExists } from './DescriptionExists';
 import { CommentBlock } from './CommentBlock';
 import { Form, Field } from "react-final-form";
-import { addComment } from './helpers';
+// import { addComment, deleteComment, editComment } from './helpers';
 import { ICard } from '../../types/ICard';
+import { OnChange } from 'react-final-form-listeners'
+import { Comment, ITodoList } from '../../types';
+import { addComment } from '../../state/ducks/card';
+import { useDispatch } from 'react-redux';
+
 
 interface Props {
     visible: boolean;
-    columnTitle: string;
+    column: ITodoList;
     card: ICard;
     onClose: () => void;
     deleteCard: () => void;
@@ -28,21 +33,20 @@ interface Values {
 }
 
 const CardModal = (props: Props) => {
+    const dispatch = useDispatch()
 
-    const { card, onClose, editCard, deleteCard, visible, columnTitle } = props;
+    const { card, onClose, editCard, deleteCard, visible, column } = props;
     const rootEl = useRef<HTMLDivElement>(document.createElement("div"));
 
     const [description, setDesc] = useState(card.description);
-    const [isEdit, setIsEdit] = useState(false);
+    const [isEditDesc, setIsEdit] = useState(false);
+    const [isEditForm, setIsEditForm] = useState(false);
     const [isShownActionComment, setisShownActionComment] = useState(false);
-    const [comment, setComment] = useState<string>();
     const [isShownDetails, setisShownDetails] = useState(false);
 
     useEffect(() => {
         setDesc('')
-        setIsEdit(false);
         setisShownActionComment(false)
-        setComment('');
     }, [visible]);
 
     useEffect(() => {
@@ -53,7 +57,7 @@ const CardModal = (props: Props) => {
             }
             // outside click
 
-            if (!comment) {
+            if (!isShownActionComment) {
                 setisShownActionComment(false);
             }
         };
@@ -64,14 +68,22 @@ const CardModal = (props: Props) => {
     }, [isShownActionComment]);
 
     const onSubmit = (values: Values) => {
-        console.log(values);
-        // if (!comment) return;
+        console.log('submit');
+        const { comment } = values;
+        if (!comment) return;
 
-        // const newCard: ICard = addComment(card, comment);
+        const newComment: Comment = {
+            id: Math.round(Math.random() * 10000),
+            text: comment,
+            author: localStorage.getItem('name') || ""
+        }
 
-        // editCard(newCard);
-        // setComment('');
-        // setisShownActionComment(false);
+        dispatch(addComment({
+            id: column.id,
+            cardId: card.id,
+            comment: newComment
+        }));
+        setisShownActionComment(false);
     };
 
     const setTitle = (title: string) => {
@@ -79,7 +91,6 @@ const CardModal = (props: Props) => {
             ...card,
             title
         };
-
         editCard(newCard);
     }
 
@@ -97,8 +108,26 @@ const CardModal = (props: Props) => {
         setisShownActionComment(true);
     }
 
-    // const comments = card.comment?.map((item, index) => <CommentBlock key={index} item={item}
-    //     editComment={editComment} deleteComment={deleteComment} />)
+    const onEditForm = (values: Values) => {
+        console.log(values);
+        if (values) {
+            setIsEditForm(true)
+        } else {
+            setIsEditForm(false)
+        }
+    }
+
+    const onEditComment = (comment: Comment) => {
+        // const newCard = editComment(card, comment);
+        // editCard(newCard);
+    }
+    const onDeleteComment = (id: number) => {
+        // const newCard = deleteComment(card, id);
+        // editCard(newCard);
+    }
+
+    const comments = card.comment?.map((item, index) => <CommentBlock key={index} item={item}
+        editComment={onEditComment} deleteComment={onDeleteComment} />)
 
     return (
         <Popup visible={visible}>
@@ -106,7 +135,7 @@ const CardModal = (props: Props) => {
                 <Content>
                     <Header>
                         <Title height="33px" text={card.title} setTitle={setTitle} />
-                        <span>{`в колонке ${columnTitle}`}</span>
+                        <span>{`в колонке ${column.title}`}</span>
                         <IconWrap>
                             <BiCreditCardFront style={{ width: "25px", height: "25px" }} />
                         </IconWrap>
@@ -123,15 +152,15 @@ const CardModal = (props: Props) => {
                                     style={{ marginLeft: "8px" }}>Изменить</Button>}
                             </DescriptionRow>
                             <DescriptionRow>
-                                {(description || isEdit) ? <DescriptionExists
+                                {(description || isEditDesc) ? <DescriptionExists
                                     description={description}
                                     setDesc={setDesc}
                                     setIsEdit={setIsEdit}
-                                    isEdit={isEdit}
+                                    isEdit={isEditDesc}
                                 /> :
                                     <DescNotExist onClick={() => setIsEdit(true)}>Добавить более подробное описание...</DescNotExist>}
                             </DescriptionRow>
-                            {isEdit && <DescriptionRow>
+                            {isEditDesc && <DescriptionRow>
                                 <ButtonWithCloseIcon
                                     action={setDescription}
                                     label="Сохранить"
@@ -149,38 +178,41 @@ const CardModal = (props: Props) => {
                                 </Button>
                             </ActionWrap>
                             <MemberIcon author={card.autor} />
-                            <CommentBox ref={rootEl} className={isShownActionComment ? "open" : ""}>
+                            <CommentBox isEdit={isEditForm} onClick={onClickComment} ref={rootEl} className={isShownActionComment ? "open" : ""}>
                                 <Form
                                     onSubmit={onSubmit}
                                     render={({ handleSubmit, pristine, values }) => (
                                         <form onSubmit={handleSubmit}>
                                             <Field
                                                 name="comment"
-                                                onClick={onClickComment}
-                                                placeholder="Напишите комментарий..." >{
+                                                onChange={onSubmit}
+                                                value={values.comment}>{
                                                     (props) => (
                                                         <CommentEl
-                                                            onClick={onClickComment}
                                                             name={props.input.name}
+                                                            placeholder="Напишите комментарий..."
                                                             value={props.input.value}
                                                             onChange={props.input.onChange}
                                                         />
                                                     )
                                                 }</Field>
-                                            <CommentAction type="submit"
+                                            <OnChange name="comment">
+                                                {(values) => onEditForm(values)}
+                                            </OnChange>
+                                            <button type="submit"
                                                 className={isShownActionComment ? "open" : ""}
-                                                isEdit={pristine}>
+                                                disabled={pristine}
+                                            >
                                                 Сохранить
-                                            </CommentAction>
-                                            <pre>{JSON.stringify(values, undefined, 2)}</pre>
+                                            </button>
                                         </form>
                                     )} />
                             </CommentBox>
                         </CommentWrap>
-                        {/* <div>{comments}</div> */}
+                        <div>{comments}</div>
                         {isShownDetails && <Details>
                             <MemberIcon author={card.autor} />
-                            <span>{`${card.autor} добавил эту карточку в список ${columnTitle}`}</span>
+                            <span>{`${card.autor} добавил эту карточку в список ${column.title}`}</span>
                         </Details>}
                     </MainCol>
                     <SideBar>
@@ -240,27 +272,27 @@ interface CommentActionProps {
     readonly isEdit: boolean;
 }
 
-const CommentAction = styled.button<CommentActionProps>`
-    bottom: 8px;
-    left: 12px;
-    opacity: 0;
-    position: absolute;
-    background-color: ${props => props.isEdit ? "#0079bf" : "#091e420a"}; 
-    border: none;
-    box-shadow: none;
-    color: ${props => props.isEdit ? "#fff" : "#a5adba"}; 
-    transform: translateY(48px);
-    cursor: ${props => props.isEdit ? "pointer" : "not-allowed"};
-    transition-duration: 85ms;
-    transition-property: opacity,transform;
-    padding: 6px 12px;
+// const CommentAction = styled.button<CommentActionProps>`
+//     bottom: 8px;
+//     left: 12px;
+//     opacity: 0;
+//     position: absolute;
+//     background-color: ${props => props.isEdit ? "#0079bf" : "#091e420a"}; 
+//     border: none;
+//     box-shadow: none;
+//     color: ${props => props.isEdit ? "#fff" : "#a5adba"}; 
+//     transform: translateY(48px);
+//     cursor: ${props => props.isEdit ? "pointer" : "not-allowed"};
+//     transition-duration: 85ms;
+//     transition-property: opacity,transform;
+//     padding: 6px 12px;
 
-    &.open {
-        opacity: 1;
-        transform: translateY(0);
-    }
-`
-const CommentBox = styled.div`
+//     &.open {
+//         opacity: 1;
+//         transform: translateY(0);
+//     }
+// `
+const CommentBox = styled.div<CommentActionProps>`
     padding: 8px 12px;
     position: relative;
     background-color: #fff;
@@ -278,8 +310,25 @@ const CommentBox = styled.div`
         padding-bottom: 56px;
     }
 
-    form { 
+    button { 
+        bottom: 8px;
+        left: 12px;
+        opacity: 0;
+        position: absolute;
+        background-color: ${props => props.isEdit ? "#0079bf" : "#091e420a"}; 
+        border: none;
+        box-shadow: none;
+        color: ${props => props.isEdit ? "#fff" : "#a5adba"};
+        transform: translateY(48px);
+        cursor: ${props => props.isEdit ? "pointer" : "not-allowed"};
+        transition-duration: 85ms;
+        transition-property: opacity,transform;
+        padding: 6px 12px;
+    }
 
+    & button.open {
+            opacity: 1;
+            transform: translateY(0);
     }
 `
 

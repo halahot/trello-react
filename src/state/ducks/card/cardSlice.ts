@@ -26,7 +26,8 @@ export const listSlice = createSlice({
     deleteCard: (state, action) => {
       const { id, cardId } = action.payload;
       const index = state.findIndex(x => x.id === id);
-      state[index].cards.filter((card) => card.id !== cardId);
+      const cardIndex = state[index].cards.findIndex(x => x.id === cardId)
+      state[index].cards.splice(cardIndex, 1);
     },
     editCard: (state, action) => {
       const { id, card } = action.payload;
@@ -34,9 +35,20 @@ export const listSlice = createSlice({
       const cardIndex = state[index].cards.indexOf(card);
       state[index].cards.splice(cardIndex, 1, card);
     },
+    addComment: (state, action) => {
+      debugger
+      const { id, cardId, comment } = action.payload;
+      const index = state.findIndex(x => x.id === id);
+      const cardIndex = state[index].cards.findIndex(x => x.id === cardId);
+      state[index].cards[cardIndex].comment?.push(comment);
+    }
   },
 });
 
-export const { addCard, deleteCard, editCard, renameList } = listSlice.actions;
+export const { addCard,
+   deleteCard,
+   editCard,
+   addComment,
+   renameList } = listSlice.actions;
 
 export default listSlice.reducer;

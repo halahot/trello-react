@@ -16,13 +16,6 @@ interface Props {
     title: string;
 }
 
-// const useFocus = () => {
-//     const htmlElRef = useRef(null)
-//     const setFocus = () => {htmlElRef.current &&  htmlElRef.current.focus()}
-
-//     return [ htmlElRef, setFocus ] 
-// }
-
 export const CardEditModal = ({ title, openCard, renameCard, deleteCard, visible, coordinates, onClose }: Props) => {
 
     const rootEl = useRef<HTMLTextAreaElement>(document.createElement("textarea"));

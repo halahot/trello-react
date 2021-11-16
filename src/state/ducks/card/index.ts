@@ -1,7 +1,7 @@
-import listReducer, { addCard, deleteCard, editCard, renameList } from "./cardSlice";
+import listReducer, { addCard, addComment, deleteCard, editCard, renameList } from "./cardSlice";
 
 export {
-    addCard, deleteCard, editCard, renameList  
+    addCard, deleteCard, editCard, renameList, addComment  
 }
 
 export default listReducer;
