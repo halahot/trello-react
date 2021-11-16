@@ -11,7 +11,6 @@ import { ButtonWithCloseIcon } from '../ButtonsWithCloseIcon';
 import { DescriptionExists } from './DescriptionExists';
 import { CommentBlock } from './CommentBlock';
 import { Form, Field } from "react-final-form";
-// import { addComment, deleteComment, editComment } from './helpers';
 import { ICard } from '../../types/ICard';
 import { OnChange } from 'react-final-form-listeners'
 import { Comment, ITodoList } from '../../types';
@@ -118,12 +117,28 @@ const CardModal = (props: Props) => {
     }
 
     const onEditComment = (comment: Comment) => {
-        // const newCard = editComment(card, comment);
-        // editCard(newCard);
+        let comments = card.comment;
+        const index = comments?.findIndex((x: Comment) => x.id === comment.id) || 0
+        comments?.splice(index, 1, comment);
+
+        const newCard: ICard = {
+            ...card,
+            comment: comments
+        };
+
+        editCard(newCard);
     }
     const onDeleteComment = (id: number) => {
-        // const newCard = deleteComment(card, id);
-        // editCard(newCard);
+        let comments = card.comment;
+        const index = comments?.findIndex((x: Comment) => x.id === id) || 0
+        comments?.splice(index, 1);
+
+
+        const newCard: ICard = {
+            ...card,
+            comment: comments
+        };
+        editCard(newCard);
     }
 
     const comments = card.comment?.map((item, index) => <CommentBlock key={index} item={item}
