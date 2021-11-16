@@ -9,8 +9,6 @@ export interface IColumnProps {
   list: ITodoList;
 }
 
-
-
 export default function Column(props: IColumnProps) {
 
   const { list } = props;
@@ -37,7 +35,6 @@ export default function Column(props: IColumnProps) {
     }))
   }
 
-
   const setTitle = (title: string) => {
     dispatch(renameList({
       id: list.id,
@@ -49,7 +46,8 @@ export default function Column(props: IColumnProps) {
     <ListWrapper>
       <ColumnWrapper>
         <Title height="28px" text={list.title} setTitle={setTitle} />
-        <CardList column={list} addCard={clickAddCard} editCard={clickEditCard} deleteCard={clickDeleteCard} cards={list.cards} />
+        <CardList column={list} addCard={clickAddCard} editCard={clickEditCard} deleteCard={clickDeleteCard} 
+        cards={list.cards} />
       </ColumnWrapper>
     </ListWrapper>
   );

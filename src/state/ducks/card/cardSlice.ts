@@ -36,19 +36,44 @@ export const listSlice = createSlice({
       state[index].cards.splice(cardIndex, 1, card);
     },
     addComment: (state, action) => {
-      debugger
       const { id, cardId, comment } = action.payload;
       const index = state.findIndex(x => x.id === id);
       const cardIndex = state[index].cards.findIndex(x => x.id === cardId);
-      state[index].cards[cardIndex].comment?.push(comment);
+      if (state[index].cards[cardIndex].comment) {
+        state[index].cards[cardIndex].comment?.push(comment);
+      } else {
+        state[index].cards[cardIndex].comment = [comment];
+      }
+    },
+
+    editComment: (state, action) => {
+      const { id, cardId, comment } = action.payload;
+      const index = state.findIndex(x => x.id === id);
+      const cardIndex = state[index].cards.findIndex(x => x.id === cardId);
+      const commentIndex = state[index].cards[cardIndex].comment?.findIndex(x => x.id === comment.id);
+      if (commentIndex) {
+        state[index].cards[cardIndex].comment?.splice(commentIndex, 1, comment);
+      }
+    },
+
+    deleteComment: (state, action) => {
+      const { id, cardId, commentId } = action.payload;
+      const index = state.findIndex(x => x.id === id);
+      const cardIndex = state[index].cards.findIndex(x => x.id === cardId);
+      const commentIndex = state[index].cards[cardIndex].comment?.findIndex(x => x.id === commentId);
+      if (commentIndex) {
+        state[index].cards[cardIndex].comment?.splice(commentIndex, 1);
+      }
     }
   },
 });
 
 export const { addCard,
-   deleteCard,
-   editCard,
-   addComment,
-   renameList } = listSlice.actions;
+  deleteCard,
+  editCard,
+  addComment,
+  editComment, 
+  deleteComment,
+  renameList } = listSlice.actions;
 
 export default listSlice.reducer;

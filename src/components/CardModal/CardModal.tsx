@@ -14,8 +14,9 @@ import { Form, Field } from "react-final-form";
 import { ICard } from '../../types/ICard';
 import { OnChange } from 'react-final-form-listeners'
 import { Comment, ITodoList } from '../../types';
-import { addComment } from '../../state/ducks/card';
+import { addComment, deleteComment, editComment } from '../../state/ducks/card';
 import { useDispatch } from 'react-redux';
+import { FormApi } from 'final-form';
 
 
 interface Props {
@@ -35,7 +36,8 @@ const CardModal = (props: Props) => {
     const dispatch = useDispatch()
 
     const { card, onClose, editCard, deleteCard, visible, column } = props;
-    const rootEl = useRef<HTMLDivElement>(document.createElement("div"));
+    const rootEl = useRef<HTMLDivElement>(null);
+    const form = useRef<HTMLFormElement>(null);
 
     const [description, setDesc] = useState(card.description);
     const [isEditDesc, setIsEdit] = useState(false);
@@ -70,7 +72,7 @@ const CardModal = (props: Props) => {
         console.log('submit');
         const { comment } = values;
         if (!comment) return;
-
+        form.current?.reset();
         const newComment: Comment = {
             id: Math.round(Math.random() * 10000),
             text: comment,
@@ -117,28 +119,18 @@ const CardModal = (props: Props) => {
     }
 
     const onEditComment = (comment: Comment) => {
-        let comments = card.comment;
-        const index = comments?.findIndex((x: Comment) => x.id === comment.id) || 0
-        comments?.splice(index, 1, comment);
-
-        const newCard: ICard = {
-            ...card,
-            comment: comments
-        };
-
-        editCard(newCard);
+        dispatch(editComment({
+            id: column.id,
+            cardId: card.id,
+            comment: comment
+        }));
     }
     const onDeleteComment = (id: number) => {
-        let comments = card.comment;
-        const index = comments?.findIndex((x: Comment) => x.id === id) || 0
-        comments?.splice(index, 1);
-
-
-        const newCard: ICard = {
-            ...card,
-            comment: comments
-        };
-        editCard(newCard);
+        dispatch(deleteComment({
+            id: column.id,
+            cardId: card.id,
+            commentId: id
+        }));
     }
 
     const comments = card.comment?.map((item, index) => <CommentBlock key={index} item={item}
@@ -196,12 +188,12 @@ const CardModal = (props: Props) => {
                             <CommentBox isEdit={isEditForm} onClick={onClickComment} ref={rootEl} className={isShownActionComment ? "open" : ""}>
                                 <Form
                                     onSubmit={onSubmit}
-                                    render={({ handleSubmit, pristine, values }) => (
-                                        <form onSubmit={handleSubmit}>
+                                    render={({ handleSubmit, pristine, submitting, values }) => (
+                                        <form ref={form} onSubmit={handleSubmit}>
                                             <Field
                                                 name="comment"
                                                 onChange={onSubmit}
-                                                value={values.comment}>{
+                                                value={submitting ? '' : values.comment}>{
                                                     (props) => (
                                                         <CommentEl
                                                             name={props.input.name}
