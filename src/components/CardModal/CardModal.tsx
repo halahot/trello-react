@@ -188,9 +188,9 @@ const CardModal = (props: Props) => {
                             <CommentBox isEdit={isEditForm} onClick={onClickComment} ref={rootEl} className={isShownActionComment ? "open" : ""}>
                                 <Form
                                     onSubmit={onSubmit}
-                                    render={({ handleSubmit, pristine, submitting, values }) => (
-                                        <form ref={form} onSubmit={handleSubmit}>
-                                            <Field
+                                    render={({ handleSubmit, form, pristine, submitting, values }) => (
+                                        <form onSubmit={() => handleSubmit()?.then(() => form.reset())}>
+                                              <Field
                                                 name="comment"
                                                 onChange={onSubmit}
                                                 value={submitting ? '' : values.comment}>{
