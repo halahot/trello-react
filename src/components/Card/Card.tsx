@@ -23,7 +23,7 @@ export default function Card({ column, card, deleteCard, editCard }: ICardProps)
   useEffect(() => {
     const onKeyup = (e: any) => {
       if (e.key === 'Escape') {
-        onCloseModal();
+        closeModal();
       }
     }
 
@@ -45,15 +45,14 @@ export default function Card({ column, card, deleteCard, editCard }: ICardProps)
     setVisibleEditModal(false);
   }
 
-  const onCloseModal = () => {
+  const closeModal = () => {
     setVisible(false);
     setVisibleEditModal(false);
   }
 
   const onClickDelete = () => {
     deleteCard(card.id);
-    setVisible(false);
-    setVisibleEditModal(false);
+    closeModal();
   }
 
   const renameCard = (title: string) => {
@@ -81,16 +80,16 @@ export default function Card({ column, card, deleteCard, editCard }: ICardProps)
       <CardModal card={card}
         deleteCard={onClickDelete}
         editCard={editCard}
-        visible={!visible}
+        visible={visible}
         column={column}
-        onClose={onCloseModal} />
+        onClose={closeModal} />
       <CardEditModal title={card.title}
         coordinates={coordinates}
-        visible={!visibleEditModal}
+        visible={visibleEditModal}
         deleteCard={onClickDelete}
         openCard={openModal}
         renameCard={renameCard}
-        onClose={onCloseModal} />
+        onClose={closeModal} />
       <IconWrap onMouseEnter={() => setIsShown(true)} isActive={isShown} onClick={onClickIcon}><BsFillPencilFill /></IconWrap>
     </div>
   );

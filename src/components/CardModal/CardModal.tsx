@@ -13,11 +13,12 @@ import { CommentBlock } from './CommentBlock';
 import { Form, Field } from "react-final-form";
 import { ICard } from '../../types/ICard';
 import { OnChange } from 'react-final-form-listeners'
-import { Comment, ITodoList } from '../../types';
 import { addComment, deleteComment, editComment } from '../../state/ducks/card';
 import { useDispatch } from 'react-redux';
 import { FormApi } from 'final-form';
-
+import { Comment, Coordinates, ITodoList } from '../../types';
+import { CardDeleteModal } from '../CardDeleteModal';
+import autosize from 'autosize';
 
 interface Props {
     visible: boolean;
@@ -36,18 +37,33 @@ const CardModal = (props: Props) => {
     const dispatch = useDispatch()
 
     const { card, onClose, editCard, deleteCard, visible, column } = props;
-    const rootEl = useRef<HTMLDivElement>(null);
+    const commentEl = useRef<HTMLDivElement>(null);
     const form = useRef<HTMLFormElement>(null);
+    const rootEl = useRef<HTMLTextAreaElement>(null);
 
     const [description, setDesc] = useState(card.description);
     const [isEditDesc, setIsEdit] = useState(false);
     const [isEditForm, setIsEditForm] = useState(false);
     const [isShownActionComment, setisShownActionComment] = useState(false);
     const [isShownDetails, setisShownDetails] = useState(false);
+    const [isDelete, setIsDelete] = useState(false);
+    const [coordinatesDel, setCoordinates] = useState<Coordinates>({ x: 0, y: 0 });
 
     useEffect(() => {
         setDesc('')
         setisShownActionComment(false)
+        autosize(commentEl.current!);
+        return () => {
+            setDesc("");
+            setIsEdit(false);
+            setisShownActionComment(false);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (visible) {
+            rootEl.current?.focus();
+        }
     }, [visible]);
 
     useEffect(() => {
@@ -57,8 +73,7 @@ const CardModal = (props: Props) => {
                 return;
             }
             // outside click
-
-            if (!isShownActionComment) {
+            if (!rootEl.current?.value) {
                 setisShownActionComment(false);
             }
         };
@@ -70,9 +85,10 @@ const CardModal = (props: Props) => {
 
     const onSubmit = (values: Values) => {
         const { comment } = values;
-        if (!comment) return;
-        form.current?.reset();
-        const newComment: Comment = {
+
+        if (!comment?.trim()) return;
+
+        const newComment = {
             id: Math.round(Math.random() * 10000),
             text: comment,
             author: localStorage.getItem('name') || ""
@@ -92,9 +108,13 @@ const CardModal = (props: Props) => {
             title
         };
         editCard(newCard);
+        setisShownActionComment(false);
+        if (rootEl.current) rootEl.current.style.height = '20px';
+
     }
 
     const setDescription = () => {
+        if (!description?.trim()) return;
         const newCard: ICard = {
             ...card,
             description
@@ -131,8 +151,20 @@ const CardModal = (props: Props) => {
         }));
     }
 
+    const onClickDelete = (e: React.MouseEvent) => {
+        setCoordinates({ x: e.clientX, y: e.clientY })
+        setIsDelete(true);
+    }
+
+    const onDelete = () => {
+        deleteCard();
+        setIsDelete(false);
+    }
+
     const comments = card.comment?.map((item, index) => <CommentBlock key={index} item={item}
         editComment={onEditComment} deleteComment={onDeleteComment} />)
+
+    const { title } = card;
 
     return (
         <Popup visible={visible}>
@@ -183,12 +215,12 @@ const CardModal = (props: Props) => {
                                 </Button>
                             </ActionWrap>
                             <MemberIcon author={card.autor} />
-                            <CommentBox isEdit={isEditForm} onClick={onClickComment} ref={rootEl} className={isShownActionComment ? "open" : ""}>
+                            <CommentBox isEdit={isEditForm} onClick={onClickComment} ref={commentEl} className={isShownActionComment ? "open" : ""}>
                                 <Form
                                     onSubmit={onSubmit}
                                     render={({ handleSubmit, form, pristine, submitting, values }) => (
                                         <form onSubmit={() => handleSubmit()?.then(() => form.reset())}>
-                                              <Field
+                                            <Field
                                                 name="comment"
                                                 onChange={onSubmit}
                                                 value={submitting ? '' : values.comment}>{
@@ -221,12 +253,17 @@ const CardModal = (props: Props) => {
                         </Details>}
                     </MainCol>
                     <SideBar>
-                        <Button onClick={deleteCard}>Удалить</Button>
+                        <Button onClick={onClickDelete}>Удалить</Button>
                     </SideBar>
                 </Content>
                 <CloseIconWrap onClick={onClose}>
                     <CloseIcon width="15" height="15" />
                 </CloseIconWrap>
+                <CardDeleteModal
+                    visible={isDelete}
+                    coordinates={coordinatesDel}
+                    onDelete={onDelete}
+                    onClose={() => setIsDelete(false)} />
             </Wrap>
         </Popup>
     )
@@ -277,26 +314,6 @@ interface CommentActionProps {
     readonly isEdit: boolean;
 }
 
-// const CommentAction = styled.button<CommentActionProps>`
-//     bottom: 8px;
-//     left: 12px;
-//     opacity: 0;
-//     position: absolute;
-//     background-color: ${props => props.isEdit ? "#0079bf" : "#091e420a"}; 
-//     border: none;
-//     box-shadow: none;
-//     color: ${props => props.isEdit ? "#fff" : "#a5adba"}; 
-//     transform: translateY(48px);
-//     cursor: ${props => props.isEdit ? "pointer" : "not-allowed"};
-//     transition-duration: 85ms;
-//     transition-property: opacity,transform;
-//     padding: 6px 12px;
-
-//     &.open {
-//         opacity: 1;
-//         transform: translateY(0);
-//     }
-// `
 const CommentBox = styled.div<CommentActionProps>`
     padding: 8px 12px;
     position: relative;
@@ -385,6 +402,11 @@ const Header = styled.div`
     min-height: 32px;
     position: relative;
     z-index: 1;
+
+    & span {
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+    }
 `
 
 const MainCol = styled.div`

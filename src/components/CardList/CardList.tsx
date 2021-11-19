@@ -126,6 +126,7 @@ const CardTitle = styled.textarea`
     margin-bottom: 4px;
     max-height: 162px;
     min-height: 54px;
+    width: 100%;
     overflow-y: auto;
     padding: 0;
     overflow: hidden;

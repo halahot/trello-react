@@ -29,7 +29,7 @@ const PopupWrapper = styled.div<WrapperProps>`
     left: 0;
     background-color: #000000a3;
     z-index: 20;
-    display: ${(props) => props.visible ? "none" : "flex"};
+    display: ${(props) => props.visible ? "flex" : "none"};
 `
 
 

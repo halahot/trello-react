@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Coordinates } from '../../types'
 import { Badges } from '../Badges'
+import { CardDeleteModal } from '../CardDeleteModal'
 import { CloseIcon } from '../icons'
 import { Popup } from '../Popup'
 import { SaveButton } from '../SaveButton'
@@ -20,6 +21,8 @@ export const CardEditModal = ({ title, openCard, renameCard, deleteCard, visible
 
     const rootEl = useRef<HTMLTextAreaElement>(document.createElement("textarea"));
     const [text, setTitle] = useState(title);
+    const [isDelete, setIsDelete] = useState(false);
+    const [coordinatesDel, setCoordinates] = useState<Coordinates>({ x: 0, y: 0 });
 
     const onSave = () => {
         renameCard(text);
@@ -29,6 +32,16 @@ export const CardEditModal = ({ title, openCard, renameCard, deleteCard, visible
         if (e.key === 'Enter') {
             renameCard(text);
         }
+    }
+
+    const onClickDelete = (e: React.MouseEvent) => {
+        setCoordinates({ x: e.clientX, y: e.clientY })
+        setIsDelete(true);
+    }
+
+    const onDelete = () => {
+        deleteCard();
+        setIsDelete(false);
     }
 
     const { x, y } = coordinates;
@@ -42,12 +55,17 @@ export const CardEditModal = ({ title, openCard, renameCard, deleteCard, visible
                 <SaveButton action={onSave} label="Сохранить" />
                 <ButtonsWrap>
                     <Button onClick={openCard}>Открыть карточку</Button>
-                    <Button onClick={deleteCard}>Удалить</Button>
+                    <Button onClick={onClickDelete}>Удалить</Button>
                 </ButtonsWrap>
             </Container>
             <IconWrap onClick={onClose}>
                 <CloseIcon width="20" height="20" />
             </IconWrap>
+            <CardDeleteModal
+                visible={isDelete}
+                coordinates={coordinatesDel}
+                onDelete={onDelete}
+                onClose={() => setIsDelete(false)} />
         </Popup>
     )
 }
