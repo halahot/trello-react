@@ -11,15 +11,15 @@ export interface IBoardProps { }
 
 export default function Board(props: IBoardProps) {
 
-  const lists = useSelector((state: RootState) => state.lists);
-  const name = useSelector((state: RootState) => state.name)
+  const lists = useSelector((state: RootState) => state.lists.lists);
+  const name = useSelector((state: RootState) => state.name);
   const dispatch = useDispatch()
   
-  const [visible, setVisible] = useState(!!name)
+  const [visible, setVisible] = useState(!name)
 
   const saveName = (name: string) => {
     dispatch(setName(name));
-    setVisible(true);
+    setVisible(false);
   }
   const columns = lists?.map((list, index) => <Column key={index} list={list} />)
 

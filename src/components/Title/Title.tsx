@@ -8,62 +8,65 @@ export interface EditableProps {
     setTitle: (arg0: string) => void;
 }
 
-export const Title = ({text, height, placeholder, setTitle}: EditableProps) => {
+export const Title = ({ text, height, placeholder, setTitle }: EditableProps) => {
     const [clicked, setClicked] = useState(false);
     const [tekst, setText] = useState(text);
+
+    const handleClickOutside = (e: any) => {
+        if (rootEl.current && rootEl.current.contains(e.target)) {
+            // inside click
+            return;
+        }
+        // outside click            
+        rootEl.current?.blur();
+        if (rootEl.current?.value.trim()) {
+            setTitle(rootEl.current?.value);
+        }
+    };
 
     const rootEl = useRef<HTMLTextAreaElement>(null);
 
     const saveTitle = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
             rootEl.current?.blur();
-            if(tekst.trim()) {
+            if (tekst.trim()) {
                 setTitle(tekst);
             }
-            setClicked(false);
+            // setClicked(false);
         }
     }
-    
+
     useEffect(() => {
         autosize(rootEl.current!);
     }, []);
 
     const onChange = (e: any) => {
         setText(e.target.value)
-    } 
+    }
+
+    const onClick = () => {
+        setClicked(true)
+    }
 
     useEffect(() => {
-        const handleClickOutside = (e: any) => {
-            if (rootEl.current && rootEl.current.contains(e.target)) {
-                // inside click
-                return;
-            }
-            // outside click            
-            rootEl.current?.blur(); 
-            if(tekst.trim()) {
-                debugger
-                setTitle(tekst);
-            }
-        };
-
         if (clicked) {
             document.addEventListener("mousedown", handleClickOutside);
             rootEl.current?.focus();
         }
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
-            setClicked(false);
+            // setClicked(false);
         }
-    });
+    }, [clicked]);
 
     return (
-        <ColumnTitleWrap onClick={() => setClicked(true)}>           
-                <ColumnEditTitle height={height}
-                    placeholder={placeholder}
-                    onChange={onChange}
-                    ref={rootEl}
-                    value={text} 
-                    onKeyPress={saveTitle} />
+        <ColumnTitleWrap onClick={onClick}>
+            <ColumnEditTitle height={height}
+                onChange={onChange}
+                ref={rootEl}
+                defaultValue={text}
+                value={tekst}
+                onKeyPress={saveTitle} />
         </ColumnTitleWrap>
     )
 }

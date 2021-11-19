@@ -15,7 +15,6 @@ import { ICard } from '../../types/ICard';
 import { OnChange } from 'react-final-form-listeners'
 import { addComment, deleteComment, editComment } from '../../state/ducks/card';
 import { useDispatch } from 'react-redux';
-import { FormApi } from 'final-form';
 import { Comment, Coordinates, ITodoList } from '../../types';
 import { CardDeleteModal } from '../CardDeleteModal';
 import autosize from 'autosize';
@@ -34,7 +33,8 @@ interface Values {
 }
 
 const CardModal = (props: Props) => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    let myform: any;
 
     const { card, onClose, editCard, deleteCard, visible, column } = props;
     const commentEl = useRef<HTMLDivElement>(null);
@@ -50,9 +50,7 @@ const CardModal = (props: Props) => {
     const [coordinatesDel, setCoordinates] = useState<Coordinates>({ x: 0, y: 0 });
 
     useEffect(() => {
-        setDesc('')
-        setisShownActionComment(false)
-        autosize(commentEl.current!);
+        autosize(rootEl.current!);
         return () => {
             setDesc("");
             setIsEdit(false);
@@ -60,20 +58,20 @@ const CardModal = (props: Props) => {
         };
     }, []);
 
-    useEffect(() => {
-        if (visible) {
-            rootEl.current?.focus();
-        }
-    }, [visible]);
+    // useEffect(() => {
+    //     if (visible) {
+    //         rootEl.current?.focus();
+    //     }
+    // }, [visible]);
 
     useEffect(() => {
         const handleClickOutside = (e: any) => {
-            if (rootEl.current && rootEl.current.contains(e.target)) {
+            if (commentEl.current && commentEl.current.contains(e.target)) {
                 // inside click
                 return;
             }
             // outside click
-            if (!rootEl.current?.value) {
+            if (!commentEl.current) {
                 setisShownActionComment(false);
             }
         };
@@ -85,7 +83,6 @@ const CardModal = (props: Props) => {
 
     const onSubmit = (values: Values) => {
         const { comment } = values;
-
         if (!comment?.trim()) return;
 
         const newComment = {
@@ -100,6 +97,7 @@ const CardModal = (props: Props) => {
             comment: newComment
         }));
         setisShownActionComment(false);
+        myform.reset();
     };
 
     const setTitle = (title: string) => {
@@ -137,6 +135,7 @@ const CardModal = (props: Props) => {
     }
 
     const onEditComment = (comment: Comment) => {
+        debugger
         dispatch(editComment({
             id: column.id,
             cardId: card.id,
@@ -171,7 +170,7 @@ const CardModal = (props: Props) => {
             <Wrap>
                 <Content>
                     <Header>
-                        <Title height="33px" text={card.title} setTitle={setTitle} />
+                        <Title height="33px" text={title} setTitle={setTitle} />
                         <span>{`в колонке ${column.title}`}</span>
                         <IconWrap>
                             <BiCreditCardFront style={{ width: "25px", height: "25px" }} />
@@ -218,32 +217,35 @@ const CardModal = (props: Props) => {
                             <CommentBox isEdit={isEditForm} onClick={onClickComment} ref={commentEl} className={isShownActionComment ? "open" : ""}>
                                 <Form
                                     onSubmit={onSubmit}
-                                    render={({ handleSubmit, form, pristine, submitting, values }) => (
-                                        <form onSubmit={() => handleSubmit()?.then(() => form.reset())}>
-                                            <Field
-                                                name="comment"
-                                                onChange={onSubmit}
-                                                value={submitting ? '' : values.comment}>{
-                                                    (props) => (
-                                                        <CommentEl
-                                                            name={props.input.name}
-                                                            placeholder="Напишите комментарий..."
-                                                            value={props.input.value}
-                                                            onChange={props.input.onChange}
-                                                        />
-                                                    )
-                                                }</Field>
-                                            <OnChange name="comment">
-                                                {(values) => onEditForm(values)}
-                                            </OnChange>
-                                            <button type="submit"
-                                                className={isShownActionComment ? "open" : ""}
-                                                disabled={pristine}
-                                            >
-                                                Сохранить
-                                            </button>
-                                        </form>
-                                    )} />
+                                    render={({ handleSubmit, form, pristine, submitting, values }) => {
+                                        myform = form;
+                                        return (
+                                            <form onSubmit={handleSubmit}>
+                                                <Field
+                                                    name="comment"
+                                                    value={submitting ? '' : values.comment}>{
+                                                        (props) => (
+                                                            <CommentEl
+                                                                ref={rootEl}
+                                                                name={props.input.name}
+                                                                placeholder="Напишите комментарий..."
+                                                                value={props.input.value}
+                                                                onChange={props.input.onChange}
+                                                            />
+                                                        )
+                                                    }</Field>
+                                                <OnChange name="comment">
+                                                    {(values) => onEditForm(values)}
+                                                </OnChange>
+                                                <button type="submit"
+                                                    className={isShownActionComment ? "open" : ""}
+                                                    disabled={pristine}
+                                                >
+                                                    Сохранить
+                                                </button>
+                                            </form>
+                                        )
+                                    }} />
                             </CommentBox>
                         </CommentWrap>
                         <div>{comments}</div>
@@ -265,7 +267,7 @@ const CardModal = (props: Props) => {
                     onDelete={onDelete}
                     onClose={() => setIsDelete(false)} />
             </Wrap>
-        </Popup>
+        </Popup >
     )
 }
 
