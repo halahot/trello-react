@@ -17,13 +17,6 @@ interface Props {
     title: string;
 }
 
-// const useFocus = () => {
-//     const htmlElRef = useRef(null)
-//     const setFocus = () => {htmlElRef.current &&  htmlElRef.current.focus()}
-
-//     return [ htmlElRef, setFocus ] 
-// }
-
 export const CardEditModal = ({ title, openCard, renameCard, deleteCard, visible, coordinates, onClose }: Props) => {
 
     const rootEl = useRef<HTMLTextAreaElement>(document.createElement("textarea"));
@@ -31,12 +24,7 @@ export const CardEditModal = ({ title, openCard, renameCard, deleteCard, visible
     const [isDelete, setIsDelete] = useState(false);
     const [coordinatesDel, setCoordinates] = useState<Coordinates>({ x: 0, y: 0 });
 
-    useEffect(() => {
-        // rootEl.current?.focus();
-    }, [rootEl])
-
     const onSave = () => {
-        // debugger
         renameCard(text);
     }
 

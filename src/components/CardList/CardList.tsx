@@ -23,7 +23,7 @@ export const CardList: React.FC<Props> = ({ columnTitle, cards, addCard, deleteC
     }
 
     const createCard = () => {
-        if (text) {
+        if (text.trim()) {
             addCard({
                 id: Math.round(Math.random() * 10000),
                 title: text,

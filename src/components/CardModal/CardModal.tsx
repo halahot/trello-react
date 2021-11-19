@@ -80,6 +80,7 @@ const CardModal = (props: Props) => {
     }
 
     const setDescription = () => {
+        if(!description?.trim()) return;
         const newCard: ICard = {
             ...card,
             description
@@ -90,7 +91,7 @@ const CardModal = (props: Props) => {
     }
 
     const addComment = () => {
-        if (!comment) return;
+        if (!comment?.trim()) return;
 
         const newComment = {
             id: Math.round(Math.random() * 10000),
@@ -155,6 +156,8 @@ const CardModal = (props: Props) => {
 
     const comments = card.comment?.map((item, index) => <CommentBlock key={index} item={item}
         editComment={editComment} deleteComment={deleteComment} />)
+
+    const {title} = card;
 
     return (
         <Popup visible={visible}>

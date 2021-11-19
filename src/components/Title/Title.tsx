@@ -8,17 +8,17 @@ export interface EditableProps {
     setTitle: (arg0: string) => void;
 }
 
-export const Title = (props: EditableProps) => {
+export const Title = ({text, height, placeholder, setTitle}: EditableProps) => {
     const [clicked, setClicked] = useState(false);
-    const [text, setText] = useState(props.text);
+    const [tekst, setText] = useState(text);
 
     const rootEl = useRef<HTMLTextAreaElement>(null);
 
     const saveTitle = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
             rootEl.current?.blur();
-            if(text) {
-                props.setTitle(text);
+            if(tekst.trim()) {
+                setTitle(tekst);
             }
             setClicked(false);
         }
@@ -29,7 +29,7 @@ export const Title = (props: EditableProps) => {
     }, []);
 
     const onChange = (e: any) => {
-        setText(e.target.value)
+        setText(e.target.value);
     } 
 
     useEffect(() => {
@@ -40,8 +40,9 @@ export const Title = (props: EditableProps) => {
             }
             // outside click            
             rootEl.current?.blur(); 
-            if(text) {
-                props.setTitle(text);
+            if(tekst.trim()) {
+                debugger
+                setTitle(tekst);
             }
         };
 
@@ -53,12 +54,12 @@ export const Title = (props: EditableProps) => {
             document.removeEventListener('mousedown', handleClickOutside);
             setClicked(false);
         }
-    }, [clicked]);
+    });
 
     return (
         <ColumnTitleWrap onClick={() => setClicked(true)}>           
-                <ColumnEditTitle height={props.height}
-                    placeholder={props.placeholder}
+                <ColumnEditTitle height={height}
+                    placeholder={placeholder}
                     onChange={onChange}
                     ref={rootEl}
                     value={text} 

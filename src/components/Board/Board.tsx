@@ -21,7 +21,7 @@ export default function Board(props: IBoardProps) {
 
   const saveName = (name: string) => {
     localStorage.setItem('name', name);
-    setVisible(true);
+    setVisible(false);
   }
 
   const columns = state.lists?.map((list, index) => <Column key={index} list={list} />)

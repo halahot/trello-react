@@ -43,6 +43,7 @@ export default function Column(props: IColumnProps) {
   }
   
   const editCard = (card: ICard) => {
+    debugger
     dispatchCard({
       type: Types.EditCard,
       payload: {
