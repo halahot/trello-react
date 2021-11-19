@@ -27,7 +27,6 @@ export const Title = (props: EditableProps) => {
     }
 
     const onChange = (e: any) => {
-        console.log(e.target.value)
         setText(e.target.value)
     } 
 

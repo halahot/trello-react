@@ -49,14 +49,11 @@ export const CardList: React.FC<Props> = ({ column, cards, addCard, deleteCard, 
         }
     }
 
-    const onSubmit = (values: Values) => {
-        
-        console.log(values)
+    const onSubmit = (values: Values) => {        
         if (values.title) {
             createCard(values.title);
             setClicked(false);
         }
-
     }
 
     return (

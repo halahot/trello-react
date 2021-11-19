@@ -69,7 +69,6 @@ const CardModal = (props: Props) => {
     }, [isShownActionComment]);
 
     const onSubmit = (values: Values) => {
-        console.log('submit');
         const { comment } = values;
         if (!comment) return;
         form.current?.reset();
@@ -110,7 +109,6 @@ const CardModal = (props: Props) => {
     }
 
     const onEditForm = (values: Values) => {
-        console.log(values);
         if (values) {
             setIsEditForm(true)
         } else {

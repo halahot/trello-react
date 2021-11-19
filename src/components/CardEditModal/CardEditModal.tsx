@@ -21,13 +21,7 @@ export const CardEditModal = ({ title, openCard, renameCard, deleteCard, visible
     const rootEl = useRef<HTMLTextAreaElement>(document.createElement("textarea"));
     const [text, setTitle] = useState(title);
 
-    useEffect(() => {
-        console.log(rootEl)
-        // rootEl.current?.focus();
-    }, [rootEl])
-
     const onSave = () => {
-        // debugger
         renameCard(text);
     }
 
