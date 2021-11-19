@@ -32,7 +32,6 @@ export const CardEditModal = ({ title, openCard, renameCard, deleteCard, visible
     const [coordinatesDel, setCoordinates] = useState<Coordinates>({ x: 0, y: 0 });
 
     useEffect(() => {
-        console.log(rootEl)
         // rootEl.current?.focus();
     }, [rootEl])
 

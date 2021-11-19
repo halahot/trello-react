@@ -49,7 +49,6 @@ const CardModal = (props: Props) => {
 
     useEffect(() => {
         if (visible) {
-            console.log(rootEl.current);
             rootEl.current?.focus();
         }
     }, [visible]);
