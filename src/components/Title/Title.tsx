@@ -44,6 +44,7 @@ export const Title = ({text, height, placeholder, setTitle}: EditableProps) => {
                 debugger
                 setTitle(tekst);
             }
+            setClicked(false);
         };
 
         if (clicked) {
@@ -52,9 +53,8 @@ export const Title = ({text, height, placeholder, setTitle}: EditableProps) => {
         }
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
-            setClicked(false);
         }
-    });
+    } , [clicked, setTitle, tekst]);
 
     return (
         <ColumnTitleWrap onClick={() => setClicked(true)}>           
@@ -62,7 +62,7 @@ export const Title = ({text, height, placeholder, setTitle}: EditableProps) => {
                     placeholder={placeholder}
                     onChange={onChange}
                     ref={rootEl}
-                    value={text} 
+                    value={tekst} 
                     onKeyPress={saveTitle} />
         </ColumnTitleWrap>
     )
