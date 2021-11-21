@@ -135,7 +135,6 @@ const CardModal = (props: Props) => {
     }
 
     const onEditComment = (comment: Comment) => {
-        debugger
         dispatch(editComment({
             id: column.id,
             cardId: card.id,

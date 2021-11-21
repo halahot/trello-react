@@ -40,7 +40,9 @@ export const listSlice = createSlice({
     editCard: (state, action) => {
       const { id, card } = action.payload;
       const index = state.lists.findIndex(x => x.id === id);
-      const cardIndex = state.lists[index].cards.indexOf(card);
+      const cardIndex = state.lists[index].cards.findIndex(
+        (item) => item.id === card.id
+      );
       state.lists[index].cards.splice(cardIndex, 1, card);
     },
     addComment: (state, action) => {
@@ -55,7 +57,6 @@ export const listSlice = createSlice({
     },
 
     editComment: (state, action) => {
-      debugger
       const { id, cardId, comment } = action.payload;
       const index = state.lists.findIndex(x => x.id === id);
       const cardIndex = state.lists[index].cards.findIndex(x => x.id === cardId);

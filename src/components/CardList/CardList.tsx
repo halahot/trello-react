@@ -6,6 +6,8 @@ import { Form, Field } from 'react-final-form';
 import { ButtonWithCloseIcon } from '../ButtonsWithCloseIcon';
 import { ICard } from '../../types/ICard';
 import { ITodoList } from '../../types';
+import { RootState } from '../../state/store';
+import { useSelector } from 'react-redux';
 interface Props {
     cards: Array<ICard>,
     column: ITodoList;
@@ -20,6 +22,7 @@ interface Values {
 
 export const CardList: React.FC<Props> = ({ column, cards, addCard, deleteCard, editCard }) => {
     let submit: () => void;
+    const author = useSelector((state: RootState) => state.name); 
 
     const [clicked, setClicked] = useState(false);
 
@@ -31,7 +34,7 @@ export const CardList: React.FC<Props> = ({ column, cards, addCard, deleteCard, 
             id: Math.round(Math.random() * 10000),
             title: text,
             description: "",
-            autor: localStorage.getItem('name') || ''
+            autor: author
         });
     }
 

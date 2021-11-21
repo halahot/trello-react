@@ -22,6 +22,7 @@ export const Title = ({ text, height, placeholder, setTitle }: EditableProps) =>
         if (rootEl.current?.value.trim()) {
             setTitle(rootEl.current?.value);
         }
+        setClicked(false);
     };
 
     const rootEl = useRef<HTMLTextAreaElement>(null);
@@ -55,9 +56,8 @@ export const Title = ({ text, height, placeholder, setTitle }: EditableProps) =>
         }
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
-            // setClicked(false);
         }
-    }, [clicked]);
+    }, [clicked, setTitle, text]);
 
     return (
         <ColumnTitleWrap onClick={onClick}>

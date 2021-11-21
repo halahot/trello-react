@@ -44,7 +44,7 @@ export const CommentBlock = ({ item, editComment, deleteComment }: Props) => {
                 <CommentBox>
                     {!showEdit ? <p style={{whiteSpace: "pre-wrap"}}>{item.text}</p> :
                         <CommentEditBox>
-                            <TextBox defaultValue={text} onChange={(e) => setText(e.target.value)} />
+                            <TextBox defaultValue={item.text} onChange={(e) => setText(e.target.value)} />
                             <ButtonWithCloseIcon action={saveText} label="Сохранить"
                                 setClicked={() => setShowEdit(false)} />
                         </CommentEditBox>}

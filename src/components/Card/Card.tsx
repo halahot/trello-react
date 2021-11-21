@@ -77,19 +77,19 @@ export default function Card({ column, card, deleteCard, editCard }: ICardProps)
           <Badges isComment={!!card.comment} countComment={card.comment?.length} isDescription={!!card.description} openCard={openModal} />
         </Row>
       </CardWrap>
-      <CardModal card={card}
+      {visible && <CardModal card={card}
         deleteCard={onClickDelete}
         editCard={editCard}
         visible={visible}
         column={column}
-        onClose={closeModal} />
-      <CardEditModal title={card.title}
+        onClose={closeModal} />}
+      {visibleEditModal && <CardEditModal title={card.title}
         coordinates={coordinates}
         visible={visibleEditModal}
         deleteCard={onClickDelete}
         openCard={openModal}
         renameCard={renameCard}
-        onClose={closeModal} />
+        onClose={closeModal} />}
       <IconWrap onMouseEnter={() => setIsShown(true)} isActive={isShown} onClick={onClickIcon}><BsFillPencilFill /></IconWrap>
     </div>
   );

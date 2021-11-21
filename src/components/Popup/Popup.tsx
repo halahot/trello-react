@@ -6,7 +6,6 @@ interface Props {
 }
 
 export const Popup = (props: Props) => {
-    // debugger
     return (
         <PopupWrapper visible={props.visible}>
             {props.children}
